@@ -86,6 +86,10 @@
     - Replaced `height: 100%` on `html, body` with `min-height: 100dvh`, `overflow-x: hidden`, and `overflow-y: auto` with `-webkit-overflow-scrolling: touch` to prevent scroll clipping and scroll-trapping in WebKit standalone mode.
     - Updated primary layout and screen wrappers (`ScreenLayout`, `HomeScreen`, `LibraryScreen`, `SettingsScreen`, `ModeSettingsScreen`, `ItemEditScreen`, `StyleguideScreen`, `DevScreen`, `OnboardingScreen`, and `SessionScreen` chrome) with `padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px))` so bottom items in lists scroll completely clear of the home indicator bar with 24px of breathing room.
     - Added `min-height: 0` to inner flex containers (`.modes-container`, `.library-items-view`, `.nextsteps-list`, `.settings-body`, `.mode-settings-body`, `.item-edit-body`, `.onboarding-body`) to allow flex items to shrink properly and prevent flexbox scroll trapping.
+  - **Library Filter Pill Rows Mobile Optimization**:
+    - Updated `.filter-group` with `flex-wrap: nowrap;`, `white-space: nowrap;`, and 5px pill gaps so that all pills in each group (Spaces: All/Start/Charge/Rescue; Types: All/Text/Photos/Videos; Status: All Active/Retired/Not landing) stay cleanly on a single line on mobile screens.
+    - Adjusted filter chip metrics (`padding: 4px 8px;`, `font-size: 0.75rem;`, `min-height: 32px;`, `gap: 5px;`, 6px indicator dots) so the rows fit comfortably within standard 375px+ mobile viewport widths without wrapping or awkward truncation.
+    - Added hidden-scrollbar horizontal scroll fallbacks (`overflow-x: auto; scrollbar-width: none;`) to safeguard narrow or high-zoom displays.
   - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---

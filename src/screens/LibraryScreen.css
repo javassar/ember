@@ -35,14 +35,53 @@
 .filters-bar {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   margin-bottom: var(--space-6);
 }
 
 .filter-group {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.filter-group::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-group .ember-chip {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 500;
+  min-height: 32px;
+  padding: 4px 8px;
+  gap: 5px;
+}
+
+.filter-group .ember-chip .chip-indicator {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+  .filter-group {
+    gap: 6px;
+  }
+
+  .filter-group .ember-chip {
+    padding: 5px 10px;
+    font-size: 0.8125rem;
+    gap: 6px;
+  }
 }
 
 .library-loading {
