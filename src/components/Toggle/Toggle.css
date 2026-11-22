@@ -1,0 +1,79 @@
+/* Styles for the Toggle switch component. */
+
+.ember-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  user-select: none;
+}
+
+.ember-toggle-label {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  flex: 1;
+}
+
+.toggle-label-text {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.toggle-desc-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.ember-toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 32px;
+  min-height: 44px; /* Touch target container */
+  padding: 6px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ember-toggle-switch::before {
+  content: '';
+  width: 52px;
+  height: 30px;
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 9px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-text-primary);
+  border-radius: var(--radius-full);
+  transition: transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.ember-toggle-switch--checked::before {
+  background-color: var(--color-accent-start);
+  border-color: var(--color-accent-start);
+}
+
+.ember-toggle-switch--checked .toggle-thumb {
+  transform: translateX(22px);
+  background-color: var(--color-bg-base);
+}
+
+.ember-toggle-wrapper--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}

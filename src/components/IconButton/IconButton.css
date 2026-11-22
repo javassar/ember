@@ -1,0 +1,74 @@
+/* Styles for the IconButton component. */
+
+.ember-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px; /* Guaranteed WCAG touch target */
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: color var(--transition-fast),
+              background-color var(--transition-fast),
+              border-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.ember-icon-btn:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  background-color: rgba(243, 239, 232, 0.08);
+}
+
+.ember-icon-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.ember-icon-btn--sm {
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-2);
+}
+
+.ember-icon-btn--md {
+  min-width: 48px;
+  min-height: 48px;
+  padding: var(--space-3);
+}
+
+.ember-icon-btn--lg {
+  min-width: 56px;
+  min-height: 56px;
+  padding: var(--space-4);
+}
+
+/* Filled Variant */
+.ember-icon-btn--filled {
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-quiet);
+}
+
+.ember-icon-btn--filled:hover:not(:disabled) {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border-subtle);
+}
+
+/* Bordered Variant */
+.ember-icon-btn--bordered {
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* Active State */
+.ember-icon-btn--active {
+  color: var(--color-accent-start);
+  background-color: rgba(244, 185, 122, 0.12);
+  border-color: rgba(244, 185, 122, 0.3);
+}
+
+.ember-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}

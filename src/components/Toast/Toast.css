@@ -1,0 +1,59 @@
+/* Styles for the Toast component. */
+
+.ember-toast {
+  position: fixed;
+  bottom: calc(var(--space-8) + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  animation: toastIn 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 90vw;
+}
+
+.toast-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-start);
+  box-shadow: 0 0 6px var(--color-accent-start);
+}
+
+.ember-toast--success .toast-dot {
+  background-color: var(--color-accent-rescue);
+  box-shadow: 0 0 6px var(--color-accent-rescue);
+}
+
+.ember-toast--warning .toast-dot {
+  background-color: var(--color-accent-charge);
+  box-shadow: 0 0 6px var(--color-accent-charge);
+}
+
+.toast-text {
+  font-family: var(--font-interface);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

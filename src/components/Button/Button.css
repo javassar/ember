@@ -1,0 +1,131 @@
+/* Styles for the Button component. */
+
+.ember-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: var(--radius-md);
+  font-family: var(--font-interface);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.ember-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ember-btn--sm {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.8125rem;
+  border-radius: var(--radius-sm);
+}
+
+.ember-btn--md {
+  min-height: 48px; /* Meets 44px touch target requirement */
+  padding: var(--space-3) var(--space-5);
+  font-size: 0.9375rem;
+}
+
+.ember-btn--lg {
+  min-height: 56px;
+  padding: var(--space-4) var(--space-6);
+  font-size: 1.0625rem;
+}
+
+.ember-btn--full {
+  width: 100%;
+}
+
+/* Primary Variant */
+.ember-btn--primary {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-base);
+  border: 1px solid transparent;
+}
+
+.ember-btn--primary:hover:not(:disabled) {
+  background-color: #ffffff;
+}
+
+/* Secondary Variant */
+.ember-btn--secondary {
+  background-color: var(--color-bg-surface-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.ember-btn--secondary:hover:not(:disabled) {
+  background-color: rgba(243, 239, 232, 0.08);
+  border-color: var(--color-border-focus);
+}
+
+/* Ghost / Quiet Variant */
+.ember-btn--ghost {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid transparent;
+}
+
+.ember-btn--ghost:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  background-color: rgba(243, 239, 232, 0.05);
+}
+
+/* Danger Variant */
+.ember-btn--danger {
+  background-color: rgba(255, 107, 107, 0.12);
+  color: var(--color-accent-charge);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.ember-btn--danger:hover:not(:disabled) {
+  background-color: rgba(255, 107, 107, 0.2);
+}
+
+/* Mode-tinted Accents */
+.ember-btn--accent-start {
+  background-color: var(--color-accent-start);
+  color: var(--color-bg-base);
+}
+
+.ember-btn--accent-charge {
+  background-color: var(--color-accent-charge);
+  color: var(--color-bg-base);
+}
+
+.ember-btn--accent-rescue {
+  background-color: var(--color-accent-rescue);
+  color: var(--color-bg-base);
+}
+
+/* Disabled State */
+.ember-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading Spinner */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  margin-right: var(--space-2);
+  animation: btn-spin 0.75s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

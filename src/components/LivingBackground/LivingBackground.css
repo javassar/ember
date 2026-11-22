@@ -1,0 +1,159 @@
+/* Styles for the LivingBackground component. */
+
+.ember-living-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background-color: var(--color-bg-base);
+  pointer-events: none;
+  transition: background-color var(--transition-accent);
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: var(--radius-full);
+  filter: blur(80px);
+  will-change: transform;
+  opacity: 0.35;
+  transition: background-color var(--transition-accent), opacity var(--transition-accent);
+}
+
+/* Orb 1: Upper left drifting orb */
+.orb-1 {
+  width: min(60vw, 550px);
+  height: min(60vw, 550px);
+  top: -10%;
+  left: -10%;
+  animation: drift-1 65s ease-in-out infinite alternate;
+}
+
+/* Orb 2: Lower right drifting orb */
+.orb-2 {
+  width: min(70vw, 650px);
+  height: min(70vw, 650px);
+  bottom: -15%;
+  right: -15%;
+  animation: drift-2 80s ease-in-out infinite alternate;
+}
+
+/* Orb 3: Center dynamic drifting orb */
+.orb-3 {
+  width: min(45vw, 420px);
+  height: min(45vw, 420px);
+  top: 35%;
+  left: 30%;
+  animation: drift-3 50s ease-in-out infinite alternate;
+}
+
+/* Orb Base: Subtle dark undertone anchor */
+.orb-base {
+  width: 80vw;
+  height: 80vw;
+  top: 10%;
+  left: 10%;
+  background: radial-gradient(circle, #16161f 0%, transparent 70%);
+  opacity: 0.5;
+}
+
+/* Home Mode: Blends all three accents */
+.mode-home .orb-1 {
+  background: radial-gradient(circle, var(--color-accent-start) 0%, transparent 70%);
+}
+.mode-home .orb-2 {
+  background: radial-gradient(circle, var(--color-accent-charge) 0%, transparent 70%);
+}
+.mode-home .orb-3 {
+  background: radial-gradient(circle, var(--color-accent-rescue) 0%, transparent 70%);
+}
+
+/* Start Mode: Warm Amber Dominance */
+.mode-start .orb-1 {
+  background: radial-gradient(circle, var(--color-accent-start) 0%, transparent 70%);
+  opacity: 0.45;
+}
+.mode-start .orb-2 {
+  background: radial-gradient(circle, #d99a53 0%, transparent 70%);
+  opacity: 0.35;
+}
+.mode-start .orb-3 {
+  background: radial-gradient(circle, var(--color-accent-start) 0%, transparent 70%);
+  opacity: 0.4;
+}
+
+/* Charge Mode: Hot Coral Dominance */
+.mode-charge .orb-1 {
+  background: radial-gradient(circle, var(--color-accent-charge) 0%, transparent 70%);
+  opacity: 0.45;
+}
+.mode-charge .orb-2 {
+  background: radial-gradient(circle, #ff4757 0%, transparent 70%);
+  opacity: 0.35;
+}
+.mode-charge .orb-3 {
+  background: radial-gradient(circle, var(--color-accent-charge) 0%, transparent 70%);
+  opacity: 0.4;
+}
+
+/* Rescue Mode: Calm Teal Dominance */
+.mode-rescue .orb-1 {
+  background: radial-gradient(circle, var(--color-accent-rescue) 0%, transparent 70%);
+  opacity: 0.45;
+}
+.mode-rescue .orb-2 {
+  background: radial-gradient(circle, #38ada9 0%, transparent 70%);
+  opacity: 0.35;
+}
+.mode-rescue .orb-3 {
+  background: radial-gradient(circle, var(--color-accent-rescue) 0%, transparent 70%);
+  opacity: 0.4;
+}
+
+/* Animation Keyframes using transform only (GPU accelerated) */
+@keyframes drift-1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(25vw, 15vh) scale(1.15);
+  }
+  100% {
+    transform: translate(10vw, 30vh) scale(0.95);
+  }
+}
+
+@keyframes drift-2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-20vw, -20vh) scale(1.1);
+  }
+  100% {
+    transform: translate(-30vw, -5vh) scale(0.9);
+  }
+}
+
+@keyframes drift-3 {
+  0% {
+    transform: translate(0, 0) scale(0.9);
+  }
+  50% {
+    transform: translate(-15vw, 15vh) scale(1.2);
+  }
+  100% {
+    transform: translate(15vw, -15vh) scale(1);
+  }
+}
+
+/* Pause animation when page is hidden or paused */
+.bg--paused .gradient-orb {
+  animation-play-state: paused !important;
+}
+
+/* Reduced Motion Override: Static subtle gradient */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-orb {
+    animation: none !important;
+  }
+}

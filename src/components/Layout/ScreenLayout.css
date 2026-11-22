@@ -1,0 +1,58 @@
+/* Styles for the ScreenLayout component. */
+
+.ember-screen-layout {
+  min-height: 100dvh;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 100%;
+  padding-top: calc(var(--space-6) + var(--safe-top));
+  padding-right: calc(var(--space-5) + var(--safe-right));
+  padding-bottom: calc(var(--space-8) + var(--safe-bottom));
+  padding-left: calc(var(--space-5) + var(--safe-left));
+  animation: screenFadeIn var(--transition-normal);
+}
+
+.ember-screen-layout--sm {
+  max-width: 440px;
+}
+
+.ember-screen-layout--md {
+  max-width: 580px;
+}
+
+.ember-screen-layout--lg {
+  max-width: 768px;
+}
+
+.ember-screen-layout--full {
+  max-width: 100%;
+}
+
+@keyframes screenFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember-screen-layout {
+    animation: screenFadeShort 150ms ease;
+  }
+}
+
+@keyframes screenFadeShort {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

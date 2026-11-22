@@ -1,0 +1,94 @@
+/* Styles for the Chip component. */
+
+.ember-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px; /* Touch target */
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-interface);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-quiet);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ember-chip:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-subtle);
+}
+
+.chip-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-text-tertiary);
+  transition: background-color var(--transition-fast);
+}
+
+.chip-state-text {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  text-transform: capitalize;
+}
+
+/* Membership States */
+.ember-chip--state-off {
+  opacity: 0.6;
+}
+
+.ember-chip--state-rotating {
+  border-color: var(--color-border-focus);
+  color: var(--color-text-primary);
+}
+
+.ember-chip--state-rotating .chip-indicator {
+  background-color: var(--color-accent-start);
+}
+
+.ember-chip--state-core {
+  background-color: rgba(244, 185, 122, 0.15);
+  border-color: var(--color-accent-start);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.ember-chip--state-core .chip-indicator {
+  background-color: var(--color-accent-start);
+  box-shadow: 0 0 6px var(--color-accent-start);
+}
+
+/* Mode-specific Overrides */
+.ember-chip--mode-charge.ember-chip--state-core {
+  background-color: rgba(255, 107, 107, 0.15);
+  border-color: var(--color-accent-charge);
+}
+.ember-chip--mode-charge.ember-chip--state-core .chip-indicator,
+.ember-chip--mode-charge.ember-chip--state-rotating .chip-indicator {
+  background-color: var(--color-accent-charge);
+  box-shadow: 0 0 6px var(--color-accent-charge);
+}
+
+.ember-chip--mode-rescue.ember-chip--state-core {
+  background-color: rgba(94, 201, 184, 0.15);
+  border-color: var(--color-accent-rescue);
+}
+.ember-chip--mode-rescue.ember-chip--state-core .chip-indicator,
+.ember-chip--mode-rescue.ember-chip--state-rotating .chip-indicator {
+  background-color: var(--color-accent-rescue);
+  box-shadow: 0 0 6px var(--color-accent-rescue);
+}
+
+/* Filter Selection */
+.ember-chip--selected {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-base);
+  border-color: var(--color-text-primary);
+}
+.ember-chip--selected .chip-indicator {
+  background-color: var(--color-bg-base);
+}

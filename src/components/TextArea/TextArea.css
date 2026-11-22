@@ -1,0 +1,58 @@
+/* Styles for the TextArea component. */
+
+.ember-textarea-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.textarea-label {
+  font-family: var(--font-interface);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.ember-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--space-4);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-interface);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.ember-textarea:focus {
+  border-color: var(--color-border-focus);
+  background-color: var(--color-bg-surface);
+  outline: none;
+}
+
+.ember-textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.textarea-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-2);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.textarea-hint {
+  color: var(--color-text-secondary);
+}
+
+.ember-textarea--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

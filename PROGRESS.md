@@ -6,7 +6,7 @@
 |---|---|---|
 | **M0: Project skeleton & installable shell** | **Done** | Vite + React + TS, PWA manifest, iOS head tags, config constants, placeholder home, icons |
 | **M1: Data layer** | **Done** | IndexedDB schema, migrations, repositories, sample content, /dev tools |
-| **M2: Design system & Home** | Not Started | tokens.css, Fraunces/Inter fonts, living background, Home screen, styleguide |
+| **M2: Design system & Home** | **Done** | tokens.css, Fraunces/Inter fonts, living background, Home screen, styleguide |
 | **M3: Onboarding & Lock** | Not Started | Newcomer onboarding, WebCrypto PIN hashing, lock screen, privacy curtain |
 | **M4: Content management** | Not Started | Add/edit media (photo/video/text), posters, drag-and-drop, Library |
 | **M5: Sessions** | Not Started | Weighted selection engine, ritual orb, session viewer, mode settings |
@@ -21,21 +21,23 @@
 
 - **M0 Skeleton & Tooling**: Configured Vite 6 + React 18 + TypeScript in strict mode. Used ESLint 9 with flat config (`typescript-eslint`) and Vitest for testing.
 - **PWA Service Worker**: Configured `vite-plugin-pwa` with `generateSW` and `autoUpdate` to precache all static assets, scripts, stylesheets, fonts, and icons for offline reliability.
-- **iOS Meta Configuration**: Embedded `apple-mobile-web-app-capable`, `black-translucent` status bar, and `viewport-fit=cover` in `index.html` to support native-feeling Home Screen installation on iPhones.
+- **iOS Meta Configuration**: Embedded `apple-mobile-web-app-capable`, `mobile-web-app-capable`, `black-translucent` status bar, and `viewport-fit=cover` in `index.html` to support native-feeling Home Screen installation on iPhones and Android.
 - **M1 IndexedDB Architecture**:
   - Implemented versioned migrations in `src/data/db.ts` starting at version 1 to protect existing data in future releases.
   - Split content into `items` (metadata), `blobs` (binary media), and `posters` (thumbnails) so lists load fast without loading full video or photo binaries into memory.
   - Implemented atomic multi-store transactions (`createItem`, `deleteItem`) ensuring media Blobs, thumbnail posters, and item metadata stay strictly in sync with zero orphaned records.
-  - Added indexes on `items` (`by-created`, `by-type`), `events` (`by-item`, `by-mode`, `by-session`, `by-shown`), and `nextSteps` (`by-created`).
-- **Storage Persistence**: Added `requestPersistentStorage()` at app startup to prompt browsers (specifically Safari and Chrome) not to evict local data during disk pressure. Added storage quota and usage estimators.
-- **Sample Content**: Authored 12 warm, universal text items spanning Start, Charge, and Rescue modes with mixed core/rotating assignments. Tagged each with a hidden `isSample: true` flag for safe one-tap deletion.
-- **Developer Diagnostics**: Created `/dev` screen displaying live store counts, storage quota usage, persistence status, seed/delete sample buttons, and full factory reset.
+- **M2 Design System & Visual Identity**:
+  - Engineered the **LivingBackground** using 4 large blurred radial gradient orbs driven by GPU-accelerated CSS `transform` on 50s-80s loops. Accent colors cross-fade over 1.2s on mode transitions. Animations automatically pause when the tab/page is hidden (`visibilitychange`), and reduce to a static soothing gradient when `prefers-reduced-motion` is active.
+  - Created zero-dependency accessible SVG icons (`src/components/Icons.tsx`) with strict 44px minimum touch targets and screen-reader labels.
+  - Implemented the complete 10-component Ember design system: `Button`, `IconButton`, `Toggle`, `SegmentedControl`, `Chip`, `TextArea`, `ProgressDots`, `NumberPad`, `Sheet`, and `Toast`.
+  - Built the real **Home screen** (`src/screens/HomeScreen.tsx`) with dynamic mode tiles (Start, Charge, Rescue), hover/focus accent cross-fading, header navigation icons, and Rescue next-step reminder integration.
+  - Built the interactive **Styleguide** (`src/screens/StyleguideScreen.tsx`) at `/dev/styleguide` demonstrating type scales, color swatches, background switching, and live component states.
 
 ---
 
 ## Known Issues & Notes
 
-- *None.* All 16 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
+- *None.* All 26 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
 
 ---
 
@@ -48,7 +50,8 @@
 5. Run linter: `npm run lint`
 6. Production build: `npm run build`
 7. Preview production build: `npm run preview`
-8. Open diagnostics: navigate to `/dev`
+8. Open Styleguide: navigate to `/dev/styleguide`
+9. Open diagnostics: navigate to `/dev`
 
 ---
 
