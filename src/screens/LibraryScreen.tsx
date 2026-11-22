@@ -19,6 +19,7 @@ import {
 import {
   listItems,
   getPoster,
+  getBlob,
   listNextSteps,
   updateNextStep,
   deleteNextStep,
@@ -27,12 +28,14 @@ import {
 } from '../data';
 import { STRINGS } from '../strings';
 import { findNotLandingItems } from '../engine';
+import { formatBytes } from '../lib/storage';
 import type { Item, Mode, NextStep } from '../types';
 import './LibraryScreen.css';
 
 interface ItemWithPoster {
   item: Item;
   posterUrl: string | null;
+  sizeBytes?: number;
 }
 
 export const LibraryScreen: React.FC = () => {
@@ -77,17 +80,24 @@ export const LibraryScreen: React.FC = () => {
       // Sort newest first
       filtered.sort((a, b) => b.createdAt - a.createdAt);
 
-      // Load thumbnails for media items
+      // Load thumbnails and sizes for media items
       const loaded: ItemWithPoster[] = await Promise.all(
         filtered.map(async (item) => {
           let posterUrl: string | null = null;
+          let sizeBytes: number | undefined;
           if (item.type !== 'text') {
-            const posterRecord = await getPoster(item.id);
+            const [posterRecord, blobRecord] = await Promise.all([
+              getPoster(item.id),
+              item.mediaId ? getBlob(item.mediaId) : Promise.resolve(undefined),
+            ]);
             if (posterRecord) {
               posterUrl = URL.createObjectURL(posterRecord.blob);
             }
+            if (blobRecord) {
+              sizeBytes = blobRecord.size;
+            }
           }
-          return { item, posterUrl };
+          return { item, posterUrl, sizeBytes };
         })
       );
 
@@ -283,7 +293,7 @@ export const LibraryScreen: React.FC = () => {
               </div>
             ) : (
               <div className="items-grid">
-                {itemsWithPosters.map(({ item, posterUrl }) => {
+                {itemsWithPosters.map(({ item, posterUrl, sizeBytes }) => {
                   const isNotLanding = notLandingMap.has(item.id);
                   const notLandingModes = notLandingMap.get(item.id) || [];
 
@@ -331,6 +341,9 @@ export const LibraryScreen: React.FC = () => {
                           )}
                           {item.retiredAt && (
                             <span className="retired-pill">{STRINGS.library.filterRetired}</span>
+                          )}
+                          {sizeBytes !== undefined && (
+                            <span className="item-size-badge">{formatBytes(sizeBytes)}</span>
                           )}
                           {isNotLanding && !item.retiredAt && (
                             <span className="not-landing-pill">

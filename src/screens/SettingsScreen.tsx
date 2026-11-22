@@ -1,7 +1,7 @@
-// Settings screen managing security PIN, lock timeouts, preferences, space customization, and dev tools.
+// Settings screen managing security PIN, lock timeouts, preferences, storage, backup & restore, and resets.
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ScreenLayout,
   LivingBackground,
@@ -16,10 +16,23 @@ import {
 } from '../components';
 import { useLock } from '../context/LockContext';
 import { STRINGS } from '../strings';
+import {
+  getStorageEstimate,
+  checkPersistentStorage,
+  requestPersistentStorage,
+  type StorageEstimateInfo,
+} from '../lib/storage';
+import {
+  exportBackupZip,
+  triggerBackupDownload,
+  importBackupZip,
+} from '../lib/backup';
+import { seedSampleContent } from '../data';
 import type { Mode } from '../types';
 import './SettingsScreen.css';
 
 export const SettingsScreen: React.FC = () => {
+  const navigate = useNavigate();
   const {
     hasPin,
     pinLength,
@@ -27,6 +40,7 @@ export const SettingsScreen: React.FC = () => {
     setPin,
     setTimeoutMs,
     updateSettings,
+    resetAndErase,
   } = useLock();
 
   // PIN modal flow
@@ -36,7 +50,42 @@ export const SettingsScreen: React.FC = () => {
   const [enteredConfirmPin, setEnteredConfirmPin] = useState('');
   const [isConfirming, setIsConfirming] = useState(false);
   const [pinError, setPinError] = useState<string | null>(null);
+
+  // Storage and Persistence
+  const [storageInfo, setStorageInfo] = useState<StorageEstimateInfo | null>(null);
+  const [persisted, setPersisted] = useState<boolean | null>(null);
+
+  // Backup & Restore
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [selectedBackupFile, setSelectedBackupFile] = useState<File | null>(null);
+  const [importMode, setImportMode] = useState<'merge' | 'replace'>('merge');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Erase All Data modal
+  const [isEraseModalOpen, setIsEraseModalOpen] = useState(false);
+  const [eraseInput, setEraseInput] = useState('');
+  const [isErasing, setIsErasing] = useState(false);
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const loadStorageMetrics = useCallback(async () => {
+    try {
+      const [estimate, isPersisted] = await Promise.all([
+        getStorageEstimate(),
+        checkPersistentStorage(),
+      ]);
+      setStorageInfo(estimate);
+      setPersisted(isPersisted);
+    } catch (err) {
+      console.error('Failed to load storage estimates:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadStorageMetrics();
+  }, [loadStorageMetrics]);
 
   const timeoutOptions = [
     { value: '0', label: 'Every time' },
@@ -130,6 +179,93 @@ export const SettingsScreen: React.FC = () => {
     await setPin(enteredNewPin);
     setIsPinModalOpen(false);
     setToastMessage(pinModalMode === 'create' ? 'PIN enabled.' : 'PIN updated.');
+  };
+
+  const handleRequestPersistence = async () => {
+    const granted = await requestPersistentStorage();
+    setPersisted(granted);
+    setToastMessage(
+      granted
+        ? 'Persistent storage granted.'
+        : 'Browser declined or already manages persistent storage.'
+    );
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const { blob, filename } = await exportBackupZip();
+      await triggerBackupDownload(blob, filename);
+      await updateSettings({ lastExportAt: Date.now() });
+      setToastMessage('Backup archive downloaded successfully.');
+    } catch (err) {
+      console.error('Export failed:', err);
+      setToastMessage(
+        'Export failed. If on iPhone with very large videos, try removing some media before exporting.'
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedBackupFile(e.target.files[0]);
+      setIsImportModalOpen(true);
+      e.target.value = ''; // Reset input
+    }
+  };
+
+  const handleConfirmImport = async () => {
+    if (!selectedBackupFile) return;
+    setIsImporting(true);
+    try {
+      const result = await importBackupZip(selectedBackupFile, importMode);
+      setIsImportModalOpen(false);
+      setSelectedBackupFile(null);
+      await loadStorageMetrics();
+      setToastMessage(
+        result.mode === 'merge'
+          ? STRINGS.settings.importSuccessMerge
+          : STRINGS.settings.importSuccessReplace
+      );
+      // Refresh settings in lock context
+      await updateSettings({});
+    } catch (err) {
+      console.error('Import failed:', err);
+      setToastMessage(
+        (err as Error).message || STRINGS.settings.importErrorInvalid
+      );
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleLoadSamples = async () => {
+    try {
+      await seedSampleContent();
+      await loadStorageMetrics();
+      setToastMessage(STRINGS.settings.loadSamplesSuccess);
+    } catch (err) {
+      console.error('Load samples failed:', err);
+      setToastMessage('Failed to load sample content.');
+    }
+  };
+
+  const handleConfirmErase = async () => {
+    if (eraseInput.trim() !== 'ERASE') {
+      return;
+    }
+    setIsErasing(true);
+    try {
+      await resetAndErase();
+      setIsEraseModalOpen(false);
+      navigate('/');
+    } catch (err) {
+      console.error('Erase failed:', err);
+      setToastMessage('Failed to erase content.');
+      setIsErasing(false);
+    }
   };
 
   return (
@@ -306,7 +442,7 @@ export const SettingsScreen: React.FC = () => {
                 <span className="space-badge-name">
                   {settings?.modes?.charge?.label || 'Charge'}
                 </span>
-                <span className="settings-row-desc">
+                <span className="space-badge-name">
                   {settings?.modes?.charge?.description || 'Gather energy'}
                 </span>
               </div>
@@ -334,14 +470,138 @@ export const SettingsScreen: React.FC = () => {
             </div>
           </section>
 
-          {/* Diagnostics Link */}
-          <section className="settings-card" aria-labelledby="diag-heading">
-            <h2 id="diag-heading" className="settings-card-title">
-              {STRINGS.settings.devSection}
+          {/* Device Storage & Persistence */}
+          <section className="settings-card" aria-labelledby="storage-heading">
+            <h2 id="storage-heading" className="settings-card-title">
+              {STRINGS.settings.storageSection}
             </h2>
-            <div className="diag-links-row">
+
+            <div className="storage-meter-grid">
+              <div className="storage-meter-item">
+                <span className="storage-meter-label">{STRINGS.settings.storageUsedLabel}</span>
+                <span className="storage-meter-val">{storageInfo?.formattedUsed ?? '—'}</span>
+                {storageInfo && (
+                  <span className="storage-meter-sub">{storageInfo.percentage.toFixed(2)}% used</span>
+                )}
+              </div>
+
+              <div className="storage-meter-item">
+                <span className="storage-meter-label">{STRINGS.settings.storageQuotaLabel}</span>
+                <span className="storage-meter-val">{storageInfo?.formattedQuota ?? '—'}</span>
+              </div>
+
+              <div className="storage-meter-item">
+                <span className="storage-meter-label">{STRINGS.settings.storagePersistLabel}</span>
+                <span className="storage-meter-val">
+                  {persisted ? 'Protected' : 'Default'}
+                </span>
+                {!persisted && (
+                  <button
+                    type="button"
+                    className="persist-action-btn"
+                    onClick={handleRequestPersistence}
+                  >
+                    {STRINGS.settings.storagePersistBtn}
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* Backup & Restore */}
+          <section className="settings-card" aria-labelledby="backup-heading">
+            <h2 id="backup-heading" className="settings-card-title">
+              {STRINGS.settings.backupSection}
+            </h2>
+            <p className="settings-card-desc">{STRINGS.settings.backupDesc}</p>
+
+            <div className="backup-actions-row">
+              <Button
+                variant="primary"
+                onClick={handleExport}
+                loading={isExporting}
+                disabled={isExporting || isImporting}
+              >
+                {isExporting ? STRINGS.settings.exportingBtn : STRINGS.settings.exportBtn}
+              </Button>
+
+              <Button
+                variant="secondary"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isExporting || isImporting}
+              >
+                {STRINGS.settings.importBtn}
+              </Button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".zip,application/zip"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+            </div>
+
+            <div className="backup-meta-info">
+              {settings?.lastExportAt ? (
+                <span>
+                  {STRINGS.settings.lastExportLabel(
+                    new Date(settings.lastExportAt).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  )}
+                </span>
+              ) : (
+                <span>{STRINGS.settings.noExportYet}</span>
+              )}
+            </div>
+          </section>
+
+          {/* Sample Content */}
+          <section className="settings-card" aria-labelledby="sample-heading">
+            <h2 id="sample-heading" className="settings-card-title">
+              {STRINGS.settings.sampleContentSection}
+            </h2>
+            <p className="settings-card-desc">
+              Restore the original 12 quotes, pictures, and video samples without erasing your existing items.
+            </p>
+            <Button variant="secondary" onClick={handleLoadSamples}>
+              {STRINGS.settings.loadSamplesBtn}
+            </Button>
+          </section>
+
+          {/* Reset Ember (Danger Zone) */}
+          <section className="settings-card settings-card--danger" aria-labelledby="danger-heading">
+            <h2 id="danger-heading" className="settings-card-title text-danger">
+              {STRINGS.settings.dangerSection}
+            </h2>
+            <p className="settings-card-desc">
+              Permanently erase all your content, next steps, statistics, and settings from this device.
+            </p>
+            <Button
+              variant="danger"
+              onClick={() => {
+                setEraseInput('');
+                setIsEraseModalOpen(true);
+              }}
+            >
+              {STRINGS.settings.eraseAllBtn}
+            </Button>
+          </section>
+
+          {/* About Ember */}
+          <section className="settings-card" aria-labelledby="about-heading">
+            <h2 id="about-heading" className="settings-card-title">
+              {STRINGS.settings.aboutSection}
+            </h2>
+            <p className="about-version">{STRINGS.settings.aboutVersion}</p>
+            <p className="settings-card-desc">{STRINGS.settings.aboutPrivacy}</p>
+
+            <div className="diag-links-row" style={{ marginTop: 'var(--space-4)' }}>
               <Link to="/dev">
-                <Button variant="secondary" size="sm">
+                <Button variant="ghost" size="sm">
                   Developer Diagnostics (/dev)
                 </Button>
               </Link>
@@ -421,6 +681,132 @@ export const SettingsScreen: React.FC = () => {
               </div>
             </div>
           )}
+        </Sheet>
+
+        {/* Import Modal */}
+        <Sheet
+          isOpen={isImportModalOpen}
+          onClose={() => {
+            if (!isImporting) {
+              setIsImportModalOpen(false);
+              setSelectedBackupFile(null);
+            }
+          }}
+          title={STRINGS.settings.importModalTitle}
+        >
+          <div className="import-modal-content">
+            <p className="import-modal-desc">{STRINGS.settings.importModalDesc}</p>
+
+            <div className="import-options-stack">
+              <label
+                className={`import-option-card ${importMode === 'merge' ? 'selected' : ''}`}
+                onClick={() => setImportMode('merge')}
+              >
+                <input
+                  type="radio"
+                  name="importMode"
+                  value="merge"
+                  checked={importMode === 'merge'}
+                  onChange={() => setImportMode('merge')}
+                />
+                <div className="import-option-info">
+                  <span className="import-option-title">
+                    {STRINGS.settings.importMergeOption}
+                  </span>
+                  <span className="import-option-desc">
+                    {STRINGS.settings.importMergeDesc}
+                  </span>
+                </div>
+              </label>
+
+              <label
+                className={`import-option-card ${importMode === 'replace' ? 'selected' : ''}`}
+                onClick={() => setImportMode('replace')}
+              >
+                <input
+                  type="radio"
+                  name="importMode"
+                  value="replace"
+                  checked={importMode === 'replace'}
+                  onChange={() => setImportMode('replace')}
+                />
+                <div className="import-option-info">
+                  <span className="import-option-title text-danger">
+                    {STRINGS.settings.importReplaceOption}
+                  </span>
+                  <span className="import-option-desc">
+                    {STRINGS.settings.importReplaceDesc}
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <div className="sheet-action-stack" style={{ marginTop: 'var(--space-6)' }}>
+              <Button
+                variant={importMode === 'replace' ? 'danger' : 'primary'}
+                fullWidth
+                loading={isImporting}
+                disabled={isImporting}
+                onClick={handleConfirmImport}
+              >
+                {isImporting ? STRINGS.settings.importingBtn : STRINGS.settings.importConfirmBtn}
+              </Button>
+              <Button
+                variant="ghost"
+                fullWidth
+                disabled={isImporting}
+                onClick={() => {
+                  setIsImportModalOpen(false);
+                  setSelectedBackupFile(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Sheet>
+
+        {/* Erase All Confirmation Modal */}
+        <Sheet
+          isOpen={isEraseModalOpen}
+          onClose={() => {
+            if (!isErasing) setIsEraseModalOpen(false);
+          }}
+          title={STRINGS.settings.eraseModalTitle}
+        >
+          <div className="erase-modal-content">
+            <p className="erase-warning-text">{STRINGS.settings.eraseModalWarning}</p>
+            <p className="erase-instruction-text">{STRINGS.settings.eraseTypeInstruction}</p>
+
+            <input
+              type="text"
+              className="erase-confirm-input"
+              placeholder="ERASE"
+              value={eraseInput}
+              onChange={(e) => setEraseInput(e.target.value)}
+              autoFocus
+            />
+
+            <div className="sheet-action-stack" style={{ marginTop: 'var(--space-6)' }}>
+              <Button
+                variant="danger"
+                fullWidth
+                loading={isErasing}
+                disabled={eraseInput.trim() !== 'ERASE' || isErasing}
+                onClick={handleConfirmErase}
+              >
+                {STRINGS.settings.eraseConfirmBtn}
+              </Button>
+              <Button
+                variant="ghost"
+                fullWidth
+                disabled={isErasing}
+                onClick={() => setIsEraseModalOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
         </Sheet>
 
         {toastMessage && (

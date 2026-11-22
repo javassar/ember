@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { APP_NAME, DEFAULT_MODE_CONFIGS } from '../config';
+import { APP_NAME, DEFAULT_MODE_CONFIGS, EXPORT_REMINDER_DAYS } from '../config';
 import { STRINGS } from '../strings';
 import {
   LivingBackground,
@@ -11,7 +11,7 @@ import {
   IconLibrary,
   IconSettings,
 } from '../components';
-import { listNextSteps, updateNextStep, getSettings } from '../data';
+import { listNextSteps, updateNextStep, getSettings, countItems } from '../data';
 import type { Mode, NextStep, ModeConfig } from '../types';
 import './HomeScreen.css';
 
@@ -30,13 +30,24 @@ export const HomeScreen: React.FC = () => {
   const [activeAccent, setActiveAccent] = useState<Mode | 'home'>('home');
   const [modesConfig, setModesConfig] = useState<Record<Mode, ModeConfig>>(DEFAULT_MODE_CONFIGS);
   const [lastRescueStep, setLastRescueStep] = useState<NextStep | null>(null);
+  const [showExportReminder, setShowExportReminder] = useState<boolean>(false);
 
   const loadHomeData = useCallback(async () => {
     try {
-      const settings = await getSettings();
+      const [settings, itemsCount] = await Promise.all([
+        getSettings(),
+        countItems(),
+      ]);
+
       if (settings?.modes) {
         setModesConfig(settings.modes);
       }
+
+      // Check export reminder (older than 30 days or never exported, if user has items)
+      const lastExport = settings?.lastExportAt;
+      const exportOlderThanLimit =
+        !lastExport || Date.now() - lastExport > EXPORT_REMINDER_DAYS * 24 * 60 * 60 * 1000;
+      setShowExportReminder(itemsCount > 0 && exportOlderThanLimit);
 
       // Check for an undone Rescue next-step from the last 24 hours
       const steps = await listNextSteps();
@@ -113,6 +124,19 @@ export const HomeScreen: React.FC = () => {
           <p className="intro-heading">{STRINGS.home.heading}</p>
           <p className="intro-subheading">{STRINGS.home.subheading}</p>
         </section>
+
+        {/* Export Reminder Banner */}
+        {showExportReminder && (
+          <div className="home-export-banner" role="status">
+            <div className="export-banner-text">
+              <span className="export-banner-title">{STRINGS.home.exportReminderTitle}</span>
+              <span className="export-banner-body">{STRINGS.home.exportReminderBody}</span>
+            </div>
+            <Link to="/settings" className="export-banner-link">
+              {STRINGS.home.exportReminderAction} →
+            </Link>
+          </div>
+        )}
 
         {/* Mode Selection Tiles */}
         <main className="modes-container" role="main">

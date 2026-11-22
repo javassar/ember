@@ -12,7 +12,7 @@
 | **M5: Sessions** | **Done** | Weighted selection engine, ritual orb, session viewer, mode settings |
 | **M6: Habituation** | **Done** | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
 | **M7: Rescue next step** | **Done** | 2-minute action prompt, last-time tile reminder, next-steps library tab |
-| **M8: Backup & Settings** | Not Started | Zip export/import, storage meter, export reminders, settings completion |
+| **M8: Backup & Settings** | **Done** | Zip export/import, storage meter, export reminders, settings completion |
 | **M9: Polish & Portfolio** | Not Started | Accessibility pass, time-of-day tints, performance audits, portfolio README |
 
 ---
@@ -68,12 +68,18 @@
   - **2-Minute Action Prompt**: Seamlessly appears at the end of a Rescue session (replacing the standard end screen), or anytime via the "Skip to next step" link in the top bar. Automatically focuses the input field, supports Enter-to-save, and is fully skippable with a single tap to return Home.
   - **"Last Time" Home Tile Reminder**: Queries the `nextSteps` store on launch for undone items created within the last 24 hours. Displays a quiet line ("Last time: [step]") on the Rescue tile with "Done" (which timestamps `doneAt` in IndexedDB) and "Dismiss" (which hides it for the active session).
   - **Library "Next Steps" Management Tab**: Tab selector on `/library` displaying all steps ordered newest first, complete with one-tap completion toggle checkboxes and deletion.
+- **M8 Data Safety, Backup/Restore, Storage Meter, and Settings Completion**:
+  - **Export Engine (`client-zip`)**: Packages `manifest.json` (version 1, export date, items, events, nextSteps, safe settings without PIN hash, modes config), all media Blobs under `media/`, and thumbnails under `posters/`. On mobile/iOS Safari, triggers native Web Share sheet with fallback to download. Records `lastExportAt` timestamp.
+  - **Streaming Import Engine (`fflate`)**: Uses streaming `Unzip` to decompress and process entries progressively without loading entire uncompressed archives into memory. Supports "Merge" (default: skips duplicate IDs) and "Replace everything" (clean overwrite while preserving user's active PIN). Throws descriptive validation errors on corrupt archives or incompatible versions.
+  - **Storage Meter & Persistence**: Displays device storage used, percentage of quota, quota limit, and persistent storage grant status with one-tap protection request in Settings. Per-item file size is shown directly on cards in the Library.
+  - **Export Reminder**: Shows a quiet reminder banner on Home when content has not been backed up within 30 days (`EXPORT_REMINDER_DAYS`) or has never been backed up.
+  - **Settings Screen Completion**: Includes lock timeout selector, ritual toggle and scale, open-into destination, default sound toggle, space configuration links, storage meter, backup & restore actions, sample content loader, and full reset with irreversible `ERASE` confirmation.
 
 ---
 
 ## Known Issues & Notes
 
-- *None.* All 61 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
+- *None.* All 71 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
 
 ---
 
