@@ -164,30 +164,68 @@
   filter: hue-rotate(8deg) brightness(0.96);
 }
 
-/* Light Mode Overrides for LivingBackground: Vibrant watercolor blooms */
-:root[data-theme="light"] .gradient-orb {
-  opacity: 0.36;
-  filter: blur(65px);
+/* Light Mode Overrides for LivingBackground: Soft, luminous watercolor blooms on warm paper */
+:root[data-theme="light"] .ember-living-background.tint-morning {
+  filter: sepia(0.04) hue-rotate(-4deg);
 }
 
+:root[data-theme="light"] .ember-living-background.tint-day {
+  filter: none;
+}
+
+:root[data-theme="light"] .ember-living-background.tint-evening {
+  filter: hue-rotate(6deg); /* Warm evening hue shift without dimming brightness */
+}
+
+:root[data-theme="light"] .gradient-orb {
+  filter: blur(85px);
+  opacity: 0.9;
+}
+
+/* In light mode, remove the dark base undertone blob to keep background crisp and clean */
 :root[data-theme="light"] .orb-base {
-  background: radial-gradient(circle, #e6decb 0%, transparent 70%);
-  opacity: 0.45;
+  display: none;
+}
+
+/* Light Mode Home: Soft translucent washes of honey, coral, and periwinkle */
+:root[data-theme="light"] .mode-home .orb-1 {
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.22) 0%, transparent 70%);
+}
+
+:root[data-theme="light"] .mode-home .orb-2 {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.16) 0%, transparent 70%);
+}
+
+:root[data-theme="light"] .mode-home .orb-3 {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, transparent 70%);
+}
+
+/* Light Mode Space Accents */
+:root[data-theme="light"] .mode-start .orb-1,
+:root[data-theme="light"] .mode-start .orb-3 {
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.24) 0%, transparent 70%);
 }
 
 :root[data-theme="light"] .mode-start .orb-2 {
-  background: radial-gradient(circle, #d97706 0%, transparent 70%);
-  opacity: 0.38;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, transparent 70%);
+}
+
+:root[data-theme="light"] .mode-charge .orb-1,
+:root[data-theme="light"] .mode-charge .orb-3 {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.18) 0%, transparent 70%);
 }
 
 :root[data-theme="light"] .mode-charge .orb-2 {
-  background: radial-gradient(circle, #e11d48 0%, transparent 70%);
-  opacity: 0.38;
+  background: radial-gradient(circle, rgba(225, 29, 72, 0.22) 0%, transparent 70%);
+}
+
+:root[data-theme="light"] .mode-rescue .orb-1,
+:root[data-theme="light"] .mode-rescue .orb-3 {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
 }
 
 :root[data-theme="light"] .mode-rescue .orb-2 {
-  background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
-  opacity: 0.38;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.24) 0%, transparent 70%);
 }
 
 /* Reduced Motion Override: Static subtle gradient without time shift */

@@ -105,10 +105,11 @@ try {
   const themeToggle = await page.$('.home-nav button');
   if (themeToggle) {
     await themeToggle.click();
-    await new Promise((r) => setTimeout(r, 600));
+    // Wait for the full 1200ms background transition to complete cleanly
+    await new Promise((r) => setTimeout(r, 1400));
     await page.screenshot({ path: path.join(outDir, 'home-light.png') });
     await themeToggle.click();
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 1300));
   }
 
   console.log('Capturing Library...');
@@ -141,16 +142,16 @@ try {
   // 1. Home Screen (Dark)
   await addFrame(900);
 
-  // 2. Toggle to Light Mode
+  // 2. Toggle to Light Mode (wait for full background fade)
   const toggleBtn = await page.$('.home-nav button');
   if (toggleBtn) {
     await toggleBtn.click();
-    await new Promise((r) => setTimeout(r, 500));
-    await addFrame(800);
+    await new Promise((r) => setTimeout(r, 1300));
+    await addFrame(900);
 
     // Toggle back to Dark Mode
     await toggleBtn.click();
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 1300));
     await addFrame(500);
   }
 

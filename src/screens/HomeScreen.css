@@ -178,31 +178,34 @@
 }
 
 /* Light mode specific tile presence and vibrant accent edging */
+:root[data-theme="light"] .mode-tile {
+  background-color: #ffffff;
+  border: 1px solid rgba(26, 24, 22, 0.08);
+  box-shadow: 0 2px 12px rgba(26, 24, 22, 0.04), 0 1px 3px rgba(26, 24, 22, 0.02);
+}
+
 :root[data-theme="light"] .mode-tile--start {
   border-left: 5px solid var(--color-accent-start);
-  background-color: #ffffff;
   box-shadow: 0 4px 16px rgba(184, 86, 0, 0.08);
 }
 
 :root[data-theme="light"] .mode-tile--charge {
   border-left: 5px solid var(--color-accent-charge);
-  background-color: #ffffff;
   box-shadow: 0 4px 16px rgba(204, 27, 36, 0.08);
 }
 
 :root[data-theme="light"] .mode-tile--rescue {
   border-left: 5px solid var(--color-accent-rescue);
-  background-color: #ffffff;
   box-shadow: 0 4px 16px rgba(59, 66, 204, 0.08);
 }
 
 :root[data-theme="light"] .mode-tile-glow {
-  opacity: 0.45;
-  filter: blur(28px);
+  opacity: 0.12;
+  filter: blur(32px);
 }
 
 :root[data-theme="light"] .mode-tile:hover .mode-tile-glow {
-  opacity: 0.7;
+  opacity: 0.22;
 }
 
 .mode-tile-content {
