@@ -101,7 +101,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-6) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-3) var(--space-6) calc(24px + env(safe-area-inset-bottom, 0px));
   pointer-events: auto;
 }
 

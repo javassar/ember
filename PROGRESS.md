@@ -80,6 +80,12 @@
   - **Accessibility Audit**: Verified contrast, focus outlines, 44px minimum touch targets across all buttons and controls, and descriptive ARIA roles and labels.
   - **Intentional Palette Redesign**: Replaced the original green-teal Rescue with Twilight Iris (`#7B8CE2`) and refined Start to Sunrise Honey (`#F0A35B`), while keeping Charge as Radiant Crimson Red (`#FF5459`). Completely eliminates stop-light associations while keeping Charge motivated and fired-up.
   - **Light Mode System**: Engineered a warm parchment paper Light Theme (`#FAF8F5` base, `#1A1816` ink text) with soft watercolor LivingBackground blooms. Added an instant Sun/Moon toggle button to the Home top navigation bar and an "Appearance" preference selector (`Dark`, `Light`, `System`) in Settings. Integrated zero-FOUC theme hydration in `index.html`.
+  - **iOS Standalone Viewport & Bottom Cutoff Fix**:
+    - Embedded `viewport-fit=cover` in `<meta name="viewport">` in `index.html` to allow the app to render behind the iOS home indicator bar and status notch.
+    - Swapped all viewport height rules from legacy `100vh` to dynamic `100dvh` (`min-height: 100dvh`) across `html`, `body`, `#root`, and route loading fallbacks so iOS standalone mode calculates true usable screen height.
+    - Replaced `height: 100%` on `html, body` with `min-height: 100dvh`, `overflow-x: hidden`, and `overflow-y: auto` with `-webkit-overflow-scrolling: touch` to prevent scroll clipping and scroll-trapping in WebKit standalone mode.
+    - Updated primary layout and screen wrappers (`ScreenLayout`, `HomeScreen`, `LibraryScreen`, `SettingsScreen`, `ModeSettingsScreen`, `ItemEditScreen`, `StyleguideScreen`, `DevScreen`, `OnboardingScreen`, and `SessionScreen` chrome) with `padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px))` so bottom items in lists scroll completely clear of the home indicator bar with 24px of breathing room.
+    - Added `min-height: 0` to inner flex containers (`.modes-container`, `.library-items-view`, `.nextsteps-list`, `.settings-body`, `.mode-settings-body`, `.item-edit-body`, `.onboarding-body`) to allow flex items to shrink properly and prevent flexbox scroll trapping.
   - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---

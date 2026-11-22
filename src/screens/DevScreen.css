@@ -2,9 +2,10 @@
 
 .dev-screen {
   min-height: 100dvh;
+  box-sizing: border-box;
   padding: calc(var(--space-6) + var(--safe-top))
            calc(var(--space-5) + var(--safe-right))
-           calc(var(--space-8) + var(--safe-bottom))
+           calc(24px + env(safe-area-inset-bottom, 0px))
            calc(var(--space-5) + var(--safe-left));
   max-width: 640px;
   margin: 0 auto;

@@ -1,7 +1,7 @@
 /* Styles for the Design Styleguide screen. */
 
 .styleguide-layout {
-  padding-bottom: var(--space-16);
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
 .styleguide-header {
