@@ -1,0 +1,173 @@
+/* Styles for the Settings screen. */
+
+.settings-layout {
+  padding-bottom: var(--space-12);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.settings-title {
+  font-family: var(--font-content);
+  font-size: 1.875rem;
+  font-weight: 300;
+  color: var(--color-text-primary);
+}
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.settings-card {
+  background-color: rgba(22, 22, 31, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.settings-card-title {
+  font-family: var(--font-interface);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.pin-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border-quiet);
+}
+
+.pin-status-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.pin-status-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.pin-status-sub {
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+.pin-actions-split {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.lock-timeout-container {
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border-quiet);
+}
+
+.timeout-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-3);
+}
+
+.timeout-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.timeout-desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+/* Honesty Note */
+.honesty-note-box {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background-color: var(--color-bg-surface-elevated);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent-start);
+}
+
+.honesty-note-title {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-accent-start);
+  margin-bottom: var(--space-1);
+}
+
+.honesty-note-body {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.diag-links-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Modal Content */
+.pin-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin-modal-sub {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.pin-error-text {
+  color: var(--color-accent-charge);
+  font-size: 0.8125rem;
+  margin-bottom: var(--space-3);
+}
+
+.pin-dots-display {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.sheet-action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.pin-remove-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-2) 0;
+}
+
+.remove-pin-warning {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}

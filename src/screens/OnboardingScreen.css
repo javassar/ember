@@ -1,0 +1,231 @@
+/* Styles for the Onboarding screen. */
+
+.onboarding-layout {
+  justify-content: space-between;
+  min-height: 100dvh;
+}
+
+.onboarding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-8);
+}
+
+.skip-link {
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: var(--space-2);
+}
+
+.skip-link:hover {
+  color: var(--color-text-secondary);
+}
+
+.onboarding-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.onboarding-step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.step-title {
+  font-family: var(--font-content);
+  font-size: clamp(1.75rem, 5vw, 2.375rem);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.step-body-text {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+}
+
+/* Step 1 Preview Card */
+.preview-card-container {
+  width: 100%;
+  margin-bottom: var(--space-8);
+}
+
+.preview-card {
+  position: relative;
+  background-color: rgba(22, 22, 31, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-6);
+  overflow: hidden;
+}
+
+.preview-orb {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, var(--color-accent-start) 0%, transparent 70%);
+  filter: blur(24px);
+  opacity: 0.4;
+  animation: breathe 5s ease-in-out infinite alternate;
+}
+
+.preview-quote {
+  font-family: var(--font-content);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+  font-style: italic;
+}
+
+.preview-caption {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Step 2 Mode Cards Stack */
+.mode-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  margin-bottom: var(--space-8);
+  text-align: left;
+}
+
+.intro-mode-card {
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: var(--radius-lg);
+}
+
+.intro-mode-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  margin-bottom: var(--space-1);
+}
+
+.intro-mode--start .intro-mode-badge {
+  color: var(--color-accent-start);
+}
+.intro-mode--charge .intro-mode-badge {
+  color: var(--color-accent-charge);
+}
+.intro-mode--rescue .intro-mode-badge {
+  color: var(--color-accent-rescue);
+}
+
+.intro-mode-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* Step 3 PIN Indicators */
+.pin-indicators-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.pin-setup-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border-focus);
+  transition: all var(--transition-fast);
+}
+
+.pin-setup-dot--filled {
+  background-color: var(--color-accent-rescue);
+  border-color: var(--color-accent-rescue);
+  box-shadow: 0 0 8px var(--color-accent-rescue);
+}
+
+.onboarding-pin-error {
+  color: var(--color-accent-charge);
+  font-size: 0.8125rem;
+  margin-bottom: var(--space-3);
+}
+
+.onboarding-numberpad {
+  margin-bottom: var(--space-6);
+}
+
+.pin-step-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+/* Step 4 Install Banner */
+.install-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-accent-rescue);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-8);
+  text-align: left;
+}
+
+.install-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.install-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.choice-heading {
+  font-family: var(--font-content);
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.start-choice-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.step-action-row {
+  width: 100%;
+}
+
+@keyframes breathe {
+  0% { transform: scale(0.95); opacity: 0.3; }
+  100% { transform: scale(1.1); opacity: 0.6; }
+}

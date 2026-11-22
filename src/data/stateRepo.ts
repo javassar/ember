@@ -58,3 +58,38 @@ export async function resetEngineState(): Promise<EngineState> {
   await db.put('state', { ...DEFAULT_ENGINE_STATE, id: STATE_KEY });
   return DEFAULT_ENGINE_STATE;
 }
+
+// Lock state persistence for lockout delays across reloads.
+const LOCK_STATE_KEY = 'lock_state';
+
+export interface PersistedLockState {
+  wrongAttempts: number;
+  blockedUntil: number;
+}
+
+export const DEFAULT_LOCK_STATE: PersistedLockState = {
+  wrongAttempts: 0,
+  blockedUntil: 0,
+};
+
+export async function getPersistedLockState(): Promise<PersistedLockState> {
+  const db = await getDB();
+  const record = await db.get('state', LOCK_STATE_KEY);
+  if (record && 'wrongAttempts' in record) {
+    return {
+      wrongAttempts: record.wrongAttempts,
+      blockedUntil: record.blockedUntil,
+    };
+  }
+  return DEFAULT_LOCK_STATE;
+}
+
+export async function savePersistedLockState(state: PersistedLockState): Promise<void> {
+  const db = await getDB();
+  await db.put('state', { ...state, id: LOCK_STATE_KEY });
+}
+
+export async function resetPersistedLockState(): Promise<void> {
+  const db = await getDB();
+  await db.put('state', { ...DEFAULT_LOCK_STATE, id: LOCK_STATE_KEY });
+}

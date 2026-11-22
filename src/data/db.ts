@@ -50,7 +50,7 @@ export interface EmberDBSchema extends DBSchema {
   };
   state: {
     key: string;
-    value: EngineState & { id: string };
+    value: (EngineState | { wrongAttempts: number; blockedUntil: number }) & { id: string };
   };
   settings: {
     key: string;

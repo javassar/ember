@@ -1,0 +1,11 @@
+/* Styles for the Privacy Curtain. */
+
+.ember-privacy-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background-color: var(--color-bg-base);
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: all;
+}

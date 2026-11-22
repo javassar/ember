@@ -7,7 +7,7 @@
 | **M0: Project skeleton & installable shell** | **Done** | Vite + React + TS, PWA manifest, iOS head tags, config constants, placeholder home, icons |
 | **M1: Data layer** | **Done** | IndexedDB schema, migrations, repositories, sample content, /dev tools |
 | **M2: Design system & Home** | **Done** | tokens.css, Fraunces/Inter fonts, living background, Home screen, styleguide |
-| **M3: Onboarding & Lock** | Not Started | Newcomer onboarding, WebCrypto PIN hashing, lock screen, privacy curtain |
+| **M3: Onboarding & Lock** | **Done** | Newcomer onboarding, WebCrypto PIN hashing, lock screen, privacy curtain |
 | **M4: Content management** | Not Started | Add/edit media (photo/video/text), posters, drag-and-drop, Library |
 | **M5: Sessions** | Not Started | Weighted selection engine, ritual orb, session viewer, mode settings |
 | **M6: Habituation** | Not Started | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
@@ -27,17 +27,21 @@
   - Split content into `items` (metadata), `blobs` (binary media), and `posters` (thumbnails) so lists load fast without loading full video or photo binaries into memory.
   - Implemented atomic multi-store transactions (`createItem`, `deleteItem`) ensuring media Blobs, thumbnail posters, and item metadata stay strictly in sync with zero orphaned records.
 - **M2 Design System & Visual Identity**:
-  - Engineered the **LivingBackground** using 4 large blurred radial gradient orbs driven by GPU-accelerated CSS `transform` on 50s-80s loops. Accent colors cross-fade over 1.2s on mode transitions. Animations automatically pause when the tab/page is hidden (`visibilitychange`), and reduce to a static soothing gradient when `prefers-reduced-motion` is active.
-  - Created zero-dependency accessible SVG icons (`src/components/Icons.tsx`) with strict 44px minimum touch targets and screen-reader labels.
-  - Implemented the complete 10-component Ember design system: `Button`, `IconButton`, `Toggle`, `SegmentedControl`, `Chip`, `TextArea`, `ProgressDots`, `NumberPad`, `Sheet`, and `Toast`.
-  - Built the real **Home screen** (`src/screens/HomeScreen.tsx`) with dynamic mode tiles (Start, Charge, Rescue), hover/focus accent cross-fading, header navigation icons, and Rescue next-step reminder integration.
-  - Built the interactive **Styleguide** (`src/screens/StyleguideScreen.tsx`) at `/dev/styleguide` demonstrating type scales, color swatches, background switching, and live component states.
+  - Engineered the **LivingBackground** using 4 large blurred radial gradient orbs driven by GPU-accelerated CSS `transform` on 50s-80s loops with 1.2s accent cross-fading.
+  - Implemented the full 10-component Ember design system and interactive styleguide at `/dev/styleguide`.
+- **M3 Security, Lock Screen, and Onboarding**:
+  - **Salted PBKDF2-SHA256 Hashing**: Used standard WebCrypto (`crypto.subtle`) with 200,000 iterations to derive a 256-bit hash. Never stores plaintext PINs.
+  - **Timestamp Inactivity Tracking**: Used `localStorage` timestamps and `visibilitychange` rather than fragile background JavaScript timers, guaranteeing reliable lock timeouts even when iOS suspends apps in the background.
+  - **Exponential Lockout Delay**: Persisted wrong attempt counts and lockout expiration timestamps in IndexedDB (`state` store) so force-closing or refreshing the browser cannot bypass wrong PIN blocks (30s after 5 attempts, doubling up to 15 min).
+  - **Forgot PIN Erase Flow**: Required typing `ERASE` to wipe content and reset settings, maintaining local privacy while preventing accidental resets.
+  - **Privacy Curtain**: Deployed an opaque full-screen cover on `visibilitychange === 'hidden'` and `pagehide` to guard private content from appearing in iOS app-switcher snapshots.
+  - **Newcomer Onboarding Flow**: Created an accessible 4-step skippable onboarding tour (`/onboarding`) introducing deliberate content concepts, the three modes, optional PIN creation, platform-specific install guidance, and sample seeding.
 
 ---
 
 ## Known Issues & Notes
 
-- *None.* All 26 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
+- *None.* All 34 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
 
 ---
 
@@ -50,8 +54,10 @@
 5. Run linter: `npm run lint`
 6. Production build: `npm run build`
 7. Preview production build: `npm run preview`
-8. Open Styleguide: navigate to `/dev/styleguide`
-9. Open diagnostics: navigate to `/dev`
+8. Walk through onboarding: navigate to `/onboarding`
+9. Open Settings & PIN controls: navigate to `/settings`
+10. Open Styleguide: navigate to `/dev/styleguide`
+11. Open diagnostics: navigate to `/dev`
 
 ---
 
