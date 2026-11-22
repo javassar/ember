@@ -97,6 +97,9 @@
     - Added catch-all route redirect (`<Route path="*" element={<Navigate to="/" replace />} />`) for safe 404 navigation handling.
   - **Intentional Opt-In Space Assignment**:
     - Updated `ItemEditScreen` so that newly added items default to `off` across all spaces (`start: 'off'`, `charge: 'off'`, `rescue: 'off'`) rather than automatically being placed in rotational pools. Users explicitly click to select which space(s) an item belongs to.
+  - **Automated Device Previews & Animated Walkthrough**:
+    - Created `scripts/generate-previews.js` using headless Chrome and `gifenc` to automatically capture high-resolution mobile screenshots (`home-dark.png`, `home-light.png`, `library.png`, `session.png`) and assemble a smooth animated preview GIF (`preview.gif`) demonstrating the breathing ritual and intention cards.
+    - Embedded the walkthrough GIF and screenshots into `README.md`.
   - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---

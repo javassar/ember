@@ -25,16 +25,21 @@ Ember is designed to be shaped by you from your very first open. It is a complet
 
 ---
 
+## Walkthrough
+
+<p align="center">
+  <img src="./docs/screenshots/preview.gif" alt="Ember Experience Walkthrough" width="280" />
+  <br />
+  <sub><em>Interactive walkthrough: Theme toggle, Start space breath ritual & feedback, and Library browsing with instant filters</em></sub>
+</p>
+
+---
+
 ## Screenshots
 
-
-| Home Screen | Breath Ritual | Finite Session Feed |
-| :---: | :---: | :---: |
-| ![Home Screen](./screenshots/home.png)<br><sub>*Three intentional spaces with time-of-day tints*</sub> | ![Breath Ritual](./screenshots/ritual.png)<br><sub>*Expanding glowing orb opening ritual*</sub> | ![Session View](./screenshots/session.png)<br><sub>*Dynamic typography & edge navigation*</sub> |
-
-| Content Library | Rescue Next Step | Device Backup & Storage |
-| :---: | :---: | :---: |
-| ![Library View](./screenshots/library.png)<br><sub>*Photos, videos, and not-landing detection*</sub> | ![Rescue Prompt](./screenshots/rescue.png)<br><sub>*Connecting feelings to 2-minute actions*</sub> | ![Settings Screen](./screenshots/settings.png)<br><sub>*Client-zip backup & local storage meter*</sub> |
+| Home (Dark) | Home (Light) | Library & Single-Line Filters | Breath Ritual |
+| :---: | :---: | :---: | :---: |
+| <img src="./docs/screenshots/home-dark.png" width="200" alt="Home Screen Dark" /><br><sub><em>Three intentional spaces</em></sub> | <img src="./docs/screenshots/home-light.png" width="200" alt="Home Screen Light" /><br><sub><em>Warm paper & ink theme</em></sub> | <img src="./docs/screenshots/library.png" width="200" alt="Library View" /><br><sub><em>Filters & private quotes</em></sub> | <img src="./docs/screenshots/session.png" width="200" alt="Breath Ritual" /><br><sub><em>Expanding glowing orb</em></sub> |
 
 ---
 
