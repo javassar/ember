@@ -11,7 +11,7 @@
 | **M4: Content management** | **Done** | Add/edit media (photo/video/text), posters, drag-and-drop, Library |
 | **M5: Sessions** | **Done** | Weighted selection engine, ritual orb, session viewer, mode settings |
 | **M6: Habituation** | **Done** | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
-| **M7: Rescue next step** | Not Started | 2-minute action prompt, last-time tile reminder, next-steps library tab |
+| **M7: Rescue next step** | **Done** | 2-minute action prompt, last-time tile reminder, next-steps library tab |
 | **M8: Backup & Settings** | Not Started | Zip export/import, storage meter, export reminders, settings completion |
 | **M9: Polish & Portfolio** | Not Started | Accessibility pass, time-of-day tints, performance audits, portfolio README |
 
@@ -64,6 +64,10 @@
   - **Item Detail Screen (`/library/:id`)**:
     - "Not landing in [Mode]" banner with one-tap retire action.
     - Statistics section displaying total shows, times helped, average dwell time (in seconds), and per-space breakdowns (Start, Charge, Rescue).
+- **M7 Rescue Next Step**:
+  - **2-Minute Action Prompt**: Seamlessly appears at the end of a Rescue session (replacing the standard end screen), or anytime via the "Skip to next step" link in the top bar. Automatically focuses the input field, supports Enter-to-save, and is fully skippable with a single tap to return Home.
+  - **"Last Time" Home Tile Reminder**: Queries the `nextSteps` store on launch for undone items created within the last 24 hours. Displays a quiet line ("Last time: [step]") on the Rescue tile with "Done" (which timestamps `doneAt` in IndexedDB) and "Dismiss" (which hides it for the active session).
+  - **Library "Next Steps" Management Tab**: Tab selector on `/library` displaying all steps ordered newest first, complete with one-tap completion toggle checkboxes and deletion.
 
 ---
 

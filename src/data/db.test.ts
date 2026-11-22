@@ -213,16 +213,36 @@ describe('IndexedDB Data Layer', () => {
     expect(modeEvents.length).toBe(1);
   });
 
-  it('manages Rescue next steps', async () => {
-    const step: NextStep = {
+  it('manages Rescue next steps and filters by recency', async () => {
+    const now = Date.now();
+    const step1: NextStep = {
       id: 'step-1',
       text: 'Drink a glass of water',
-      createdAt: 2000,
+      createdAt: now - 1000,
+      doneAt: null,
+    };
+    const step2: NextStep = {
+      id: 'step-2',
+      text: 'Old step from 2 days ago',
+      createdAt: now - 48 * 60 * 60 * 1000,
       doneAt: null,
     };
 
-    await createNextStep(step);
-    expect((await listNextSteps()).length).toBe(1);
+    await createNextStep(step1);
+    await createNextStep(step2);
+
+    const steps = await listNextSteps();
+    expect(steps.length).toBe(2);
+    // Verifies newest first
+    expect(steps[0].id).toBe('step-1');
+    expect(steps[1].id).toBe('step-2');
+
+    // 24-hour filter check
+    const oneDayAgo = now - 24 * 60 * 60 * 1000;
+    const recentUndone = steps.find(
+      (s) => s.doneAt === null && s.createdAt >= oneDayAgo
+    );
+    expect(recentUndone?.id).toBe('step-1');
 
     const fetched = await getNextStep('step-1');
     expect(fetched?.text).toBe('Drink a glass of water');
@@ -235,6 +255,7 @@ describe('IndexedDB Data Layer', () => {
     expect(updated?.doneAt).not.toBeNull();
 
     await deleteNextStep('step-1');
+    await deleteNextStep('step-2');
     expect((await listNextSteps()).length).toBe(0);
   });
 

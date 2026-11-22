@@ -261,7 +261,7 @@ export const SessionScreen: React.FC = () => {
     setIsSavingRescue(true);
     try {
       await createNextStep({
-        id: `ns_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        id: crypto.randomUUID(),
         text: rescueInput.trim(),
         createdAt: Date.now(),
         doneAt: null,

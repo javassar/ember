@@ -15,6 +15,16 @@ import { listNextSteps, updateNextStep, getSettings } from '../data';
 import type { Mode, NextStep, ModeConfig } from '../types';
 import './HomeScreen.css';
 
+const DISMISSED_STEP_KEY = 'ember_dismissed_rescue_steps';
+
+const getDismissedStepIds = (): string[] => {
+  try {
+    return JSON.parse(sessionStorage.getItem(DISMISSED_STEP_KEY) || '[]');
+  } catch {
+    return [];
+  }
+};
+
 export const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
   const [activeAccent, setActiveAccent] = useState<Mode | 'home'>('home');
@@ -31,8 +41,12 @@ export const HomeScreen: React.FC = () => {
       // Check for an undone Rescue next-step from the last 24 hours
       const steps = await listNextSteps();
       const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      const dismissed = getDismissedStepIds();
       const recentUndone = steps.find(
-        (step) => step.doneAt === null && step.createdAt >= oneDayAgo
+        (step) =>
+          step.doneAt === null &&
+          step.createdAt >= oneDayAgo &&
+          !dismissed.includes(step.id)
       );
       setLastRescueStep(recentUndone || null);
     } catch (err) {
@@ -57,6 +71,15 @@ export const HomeScreen: React.FC = () => {
 
   const handleStepDismiss = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (lastRescueStep) {
+      const dismissed = getDismissedStepIds();
+      if (!dismissed.includes(lastRescueStep.id)) {
+        sessionStorage.setItem(
+          DISMISSED_STEP_KEY,
+          JSON.stringify([...dismissed, lastRescueStep.id])
+        );
+      }
+    }
     setLastRescueStep(null);
   };
 
