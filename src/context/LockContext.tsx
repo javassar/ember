@@ -26,6 +26,7 @@ export interface LockContextValue {
   lockApp: () => void;
   setPin: (newPin: string | null) => Promise<void>;
   setTimeoutMs: (timeoutMs: number) => Promise<void>;
+  updateSettings: (updates: Partial<Settings>) => Promise<void>;
   completeOnboarding: () => Promise<void>;
   resetAndErase: () => Promise<void>;
   refreshSettings: () => Promise<void>;
@@ -203,6 +204,11 @@ export const LockProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSettings(updated);
   };
 
+  const updateSettings = async (updates: Partial<Settings>) => {
+    const updated = await saveSettings(updates);
+    setSettings(updated);
+  };
+
   const completeOnboarding = async () => {
     const updated = await saveSettings({ onboardingDone: true });
     setSettings(updated);
@@ -227,6 +233,7 @@ export const LockProvider: React.FC<{ children: React.ReactNode }> = ({ children
     lockApp,
     setPin,
     setTimeoutMs,
+    updateSettings,
     completeOnboarding,
     resetAndErase,
     refreshSettings,

@@ -140,6 +140,28 @@
   margin-bottom: var(--space-2);
 }
 
+.mode-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mode-configure-link {
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.mode-configure-link:hover {
+  opacity: 1;
+  color: var(--color-text-primary);
+}
+
 .mode-badge {
   font-family: var(--font-interface);
   font-size: 0.75rem;

@@ -11,6 +11,7 @@ import {
   countNextSteps,
   getSettings,
   getEngineState,
+  saveEngineState,
   listItems,
   seedSampleContent,
   deleteSampleContent,
@@ -35,6 +36,10 @@ interface StoreCounts {
   startBagCount: number;
   chargeBagCount: number;
   rescueBagCount: number;
+  startSessionCount: number;
+  chargeSessionCount: number;
+  rescueSessionCount: number;
+  totalSessionCount: number;
 }
 
 export const DevScreen: React.FC = () => {
@@ -83,6 +88,10 @@ export const DevScreen: React.FC = () => {
         startBagCount: engineState.bags.start?.length ?? 0,
         chargeBagCount: engineState.bags.charge?.length ?? 0,
         rescueBagCount: engineState.bags.rescue?.length ?? 0,
+        startSessionCount: engineState.sessionCounts?.modeCountsToday?.start ?? 0,
+        chargeSessionCount: engineState.sessionCounts?.modeCountsToday?.charge ?? 0,
+        rescueSessionCount: engineState.sessionCounts?.modeCountsToday?.rescue ?? 0,
+        totalSessionCount: engineState.sessionCounts?.countToday ?? 0,
       });
 
       setStorage(storageInfo);
@@ -154,6 +163,26 @@ export const DevScreen: React.FC = () => {
         ? 'Persistent storage granted!'
         : 'Browser declined or already manages persistent storage.'
     );
+  };
+
+  const handleResetSessionCounts = async () => {
+    setBusy(true);
+    try {
+      await saveEngineState({
+        sessionCounts: {
+          lastSessionDate: '',
+          countToday: 0,
+          modeCountsToday: { start: 0, charge: 0, rescue: 0 },
+        },
+      });
+      setStatusMessage('Daily session counts reset to 0. Next session in each space will play the full ritual.');
+      await loadDiagnostics();
+    } catch (err) {
+      console.error('Reset session counts failed:', err);
+      setStatusMessage('Failed to reset session counts.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -264,6 +293,13 @@ export const DevScreen: React.FC = () => {
               Start: {counts?.startBagCount ?? 0} | Charge: {counts?.chargeBagCount ?? 0} | Rescue: {counts?.rescueBagCount ?? 0}
             </span>
           </div>
+
+          <div className="count-row">
+            <span className="count-name">Today's Sessions (Auto-Scaling)</span>
+            <span className="count-num">
+              Start: {counts?.startSessionCount ?? 0} | Charge: {counts?.chargeSessionCount ?? 0} | Rescue: {counts?.rescueSessionCount ?? 0} (Total: {counts?.totalSessionCount ?? 0})
+            </span>
+          </div>
         </div>
       </section>
 
@@ -273,6 +309,15 @@ export const DevScreen: React.FC = () => {
           {STRINGS.dev.actionsHeader}
         </h2>
         <div className="actions-stack">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleResetSessionCounts}
+            disabled={busy}
+          >
+            Reset Daily Session Counts (Test Ritual Again)
+          </button>
+
           <button
             type="button"
             className="btn btn-primary"

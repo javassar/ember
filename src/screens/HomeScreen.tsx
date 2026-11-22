@@ -94,10 +94,14 @@ export const HomeScreen: React.FC = () => {
         {/* Mode Selection Tiles */}
         <main className="modes-container" role="main">
           {/* Start Mode Tile */}
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className="mode-tile mode-tile--start"
             onClick={() => handleModeClick('start')}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') handleModeClick('start');
+            }}
             onMouseEnter={() => setActiveAccent('start')}
             onMouseLeave={() => setActiveAccent('home')}
             onFocus={() => setActiveAccent('start')}
@@ -106,19 +110,33 @@ export const HomeScreen: React.FC = () => {
             <div className="mode-tile-glow" aria-hidden="true" />
             <div className="mode-tile-content">
               <div className="mode-header">
-                <span className="mode-badge mode-badge--start">Start</span>
-                <span className="mode-cue">“{modesConfig.start.cue}”</span>
+                <div className="mode-header-left">
+                  <span className="mode-badge mode-badge--start">Start</span>
+                  <span className="mode-cue">“{modesConfig.start.cue}”</span>
+                </div>
+                <Link
+                  to="/modes/start"
+                  className="mode-configure-link"
+                  aria-label="Configure Start space settings"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <IconSettings size={16} />
+                </Link>
               </div>
               <h2 className="mode-label">{modesConfig.start.label}</h2>
               <p className="mode-desc">{modesConfig.start.description}</p>
             </div>
-          </button>
+          </div>
 
           {/* Charge Mode Tile */}
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className="mode-tile mode-tile--charge"
             onClick={() => handleModeClick('charge')}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') handleModeClick('charge');
+            }}
             onMouseEnter={() => setActiveAccent('charge')}
             onMouseLeave={() => setActiveAccent('home')}
             onFocus={() => setActiveAccent('charge')}
@@ -127,19 +145,33 @@ export const HomeScreen: React.FC = () => {
             <div className="mode-tile-glow" aria-hidden="true" />
             <div className="mode-tile-content">
               <div className="mode-header">
-                <span className="mode-badge mode-badge--charge">Charge</span>
-                <span className="mode-cue">“{modesConfig.charge.cue}”</span>
+                <div className="mode-header-left">
+                  <span className="mode-badge mode-badge--charge">Charge</span>
+                  <span className="mode-cue">“{modesConfig.charge.cue}”</span>
+                </div>
+                <Link
+                  to="/modes/charge"
+                  className="mode-configure-link"
+                  aria-label="Configure Charge space settings"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <IconSettings size={16} />
+                </Link>
               </div>
               <h2 className="mode-label">{modesConfig.charge.label}</h2>
               <p className="mode-desc">{modesConfig.charge.description}</p>
             </div>
-          </button>
+          </div>
 
           {/* Rescue Mode Tile */}
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className="mode-tile mode-tile--rescue"
             onClick={() => handleModeClick('rescue')}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') handleModeClick('rescue');
+            }}
             onMouseEnter={() => setActiveAccent('rescue')}
             onMouseLeave={() => setActiveAccent('home')}
             onFocus={() => setActiveAccent('rescue')}
@@ -148,8 +180,18 @@ export const HomeScreen: React.FC = () => {
             <div className="mode-tile-glow" aria-hidden="true" />
             <div className="mode-tile-content">
               <div className="mode-header">
-                <span className="mode-badge mode-badge--rescue">Rescue</span>
-                <span className="mode-cue">“{modesConfig.rescue.cue}”</span>
+                <div className="mode-header-left">
+                  <span className="mode-badge mode-badge--rescue">Rescue</span>
+                  <span className="mode-cue">“{modesConfig.rescue.cue}”</span>
+                </div>
+                <Link
+                  to="/modes/rescue"
+                  className="mode-configure-link"
+                  aria-label="Configure Rescue space settings"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <IconSettings size={16} />
+                </Link>
               </div>
               <h2 className="mode-label">{modesConfig.rescue.label}</h2>
               <p className="mode-desc">{modesConfig.rescue.description}</p>
@@ -185,7 +227,7 @@ export const HomeScreen: React.FC = () => {
                 </div>
               )}
             </div>
-          </button>
+          </div>
         </main>
 
         {/* Footer */}

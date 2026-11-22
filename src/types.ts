@@ -82,5 +82,6 @@ export interface EngineState {
   sessionCounts: {
     lastSessionDate: string;
     countToday: number;
+    modeCountsToday?: Record<Mode, number>;
   };
 }

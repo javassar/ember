@@ -1,0 +1,418 @@
+/* Styling for the Session item viewer, media presentation, and end screens. */
+
+.session-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* Tap zones for left 1/3 and right 2/3 navigation */
+.session-tap-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.session-tap-zone--left {
+  flex: 1;
+  height: 100%;
+  cursor: w-resize;
+}
+
+.session-tap-zone--right {
+  flex: 2;
+  height: 100%;
+  cursor: e-resize;
+}
+
+/* Floating UI Chrome */
+.session-chrome {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.session-chrome--hidden {
+  opacity: 0;
+}
+
+.session-chrome--visible {
+  opacity: 1;
+}
+
+.session-chrome-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--space-3) + env(safe-area-inset-top, 0px)) var(--space-4) var(--space-3);
+  pointer-events: auto;
+}
+
+.session-chrome-top-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.session-chrome-top-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.session-chrome-top-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.session-skip-next-link {
+  background: none;
+  border: none;
+  color: var(--color-accent-rescue);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  opacity: 0.85;
+}
+
+.session-skip-next-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.session-chrome-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-6) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  pointer-events: auto;
+}
+
+.session-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(22, 22, 31, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: 50%;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.session-nav-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.session-nav-btn:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
+}
+
+/* Main Content Area */
+.session-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Text Content Presentation */
+.session-text-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 720px;
+  width: 100%;
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  animation: sessionItemFade 0.4s ease-out;
+}
+
+.session-text--large {
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  letter-spacing: -0.02em;
+}
+
+.session-text--medium {
+  font-size: clamp(1.6rem, 4.2vw, 2.3rem);
+  letter-spacing: -0.015em;
+}
+
+.session-text--regular {
+  font-size: clamp(1.25rem, 3.2vw, 1.7rem);
+}
+
+.session-text--small {
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+  max-height: 65vh;
+  overflow-y: auto;
+  padding: 0 var(--space-4);
+}
+
+/* Image Presentation */
+.session-image-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  animation: sessionItemFade 0.4s ease-out;
+}
+
+.session-backdrop-blur {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(36px) brightness(0.35);
+  transform: scale(1.2);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.session-image-element {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  max-height: calc(80vh - 100px);
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+.session-caption {
+  position: relative;
+  z-index: 2;
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text-primary);
+  text-align: center;
+  max-width: 640px;
+}
+
+/* Video Presentation */
+.session-video-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  animation: sessionItemFade 0.4s ease-out;
+}
+
+.session-video-element {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  max-height: calc(80vh - 100px);
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+
+.session-video-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--color-accent-charge);
+  z-index: 4;
+  transition: width 0.1s linear;
+}
+
+.session-sound-hint {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 4;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  color: var(--color-text-primary);
+}
+
+.session-media-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  gap: var(--space-2);
+}
+
+/* End Screens */
+.session-end-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  animation: sessionItemFade 0.5s ease-out;
+  padding: var(--space-4);
+}
+
+.session-end-title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+.session-end-subtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+  line-height: 1.5;
+}
+
+.session-end-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 300px;
+}
+
+/* Rescue Prompt End Screen */
+.session-rescue-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  animation: sessionItemFade 0.5s ease-out;
+  padding: var(--space-4);
+}
+
+.session-rescue-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 300;
+  color: var(--color-accent-rescue);
+  margin-bottom: var(--space-6);
+  line-height: 1.35;
+}
+
+.session-rescue-input {
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+  outline: none;
+}
+
+.session-rescue-input:focus {
+  border-color: var(--color-accent-rescue);
+}
+
+.session-rescue-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.session-rescue-skip-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  padding: var(--space-2);
+}
+
+.session-rescue-skip-btn:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}
+
+/* Empty State */
+.session-empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 420px;
+  gap: var(--space-4);
+  animation: sessionItemFade 0.4s ease-out;
+}
+
+.session-empty-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 300;
+}
+
+.session-empty-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+@keyframes sessionItemFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

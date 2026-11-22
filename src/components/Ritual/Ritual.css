@@ -1,0 +1,145 @@
+/* Styling for the breath-paced Ritual opening. */
+
+.ritual-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-base);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  transition: opacity 0.4s ease;
+  opacity: 1;
+}
+
+.ritual-overlay--fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ritual-orb-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 240px;
+}
+
+.ritual-orb {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  filter: blur(32px);
+  opacity: 0.2;
+  will-change: transform, opacity;
+}
+
+/* Mode-specific orb glow gradients */
+.ritual-orb--start {
+  background: radial-gradient(circle, var(--color-accent-start) 0%, rgba(244, 185, 122, 0) 70%);
+}
+
+.ritual-orb--charge {
+  background: radial-gradient(circle, var(--color-accent-charge) 0%, rgba(255, 107, 107, 0) 70%);
+}
+
+.ritual-orb--rescue {
+  background: radial-gradient(circle, var(--color-accent-rescue) 0%, rgba(94, 201, 184, 0) 70%);
+}
+
+/* Full ritual animation (4000ms inhale expansion & gentle dissolve) */
+.ritual-overlay--full .ritual-orb {
+  animation: ritualInhale 4000ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Short ritual animation (1500ms quick pulse & dissolve) */
+.ritual-overlay--short .ritual-orb {
+  animation: ritualPulse 1500ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes ritualInhale {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.1;
+  }
+  60% {
+    transform: scale(1.6);
+    opacity: 0.85;
+  }
+  90% {
+    transform: scale(1.8);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.0);
+    opacity: 0;
+  }
+}
+
+@keyframes ritualPulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* Cue text styling */
+.ritual-cue-text {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text-primary);
+  text-align: center;
+  max-width: 80vw;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  animation: ritualCueFade 4000ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ritualCueFade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  25% {
+    opacity: 0.95;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 0.95;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.ritual-skip-hint {
+  position: absolute;
+  bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

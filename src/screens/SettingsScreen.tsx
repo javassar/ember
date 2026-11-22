@@ -1,4 +1,4 @@
-// Settings screen managing security PIN, lock timeouts, honesty disclosure, and preferences.
+// Settings screen managing security PIN, lock timeouts, preferences, space customization, and dev tools.
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -11,10 +11,12 @@ import {
   Sheet,
   NumberPad,
   SegmentedControl,
+  Toggle,
   Toast,
 } from '../components';
 import { useLock } from '../context/LockContext';
 import { STRINGS } from '../strings';
+import type { Mode } from '../types';
 import './SettingsScreen.css';
 
 export const SettingsScreen: React.FC = () => {
@@ -24,6 +26,7 @@ export const SettingsScreen: React.FC = () => {
     settings,
     setPin,
     setTimeoutMs,
+    updateSettings,
   } = useLock();
 
   // PIN modal flow
@@ -48,6 +51,26 @@ export const SettingsScreen: React.FC = () => {
   const handleTimeoutChange = async (val: string) => {
     await setTimeoutMs(Number(val));
     setToastMessage('Lock timeout updated.');
+  };
+
+  const handleOpenIntoChange = async (val: string) => {
+    await updateSettings({ openInto: val as 'home' | Mode });
+    setToastMessage('Startup destination updated.');
+  };
+
+  const handleRitualToggle = async (enabled: boolean) => {
+    await updateSettings({ ritualEnabled: enabled });
+    setToastMessage(enabled ? 'Ritual opening enabled.' : 'Ritual opening disabled.');
+  };
+
+  const handleRitualScaleChange = async (scale: string) => {
+    await updateSettings({ ritualScale: scale as 'auto' | 'full' | 'short' });
+    setToastMessage('Ritual length updated.');
+  };
+
+  const handleSoundToggle = async (soundOn: boolean) => {
+    await updateSettings({ soundOnByDefault: soundOn });
+    setToastMessage(soundOn ? 'Sound on by default enabled.' : 'Sound on by default disabled.');
   };
 
   const openPinModal = (mode: 'create' | 'change' | 'remove') => {
@@ -187,7 +210,131 @@ export const SettingsScreen: React.FC = () => {
             </div>
           </section>
 
-          {/* Quick Diagnostics Link */}
+          {/* Preferences: Open-Into, Ritual, Sound */}
+          <section className="settings-card" aria-labelledby="pref-heading">
+            <h2 id="pref-heading" className="settings-card-title">
+              {STRINGS.settings.preferencesSection}
+            </h2>
+
+            {/* Open Into */}
+            <div className="settings-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+              <div className="settings-row-info" style={{ marginBottom: 'var(--space-2)' }}>
+                <span className="settings-row-label">{STRINGS.settings.openIntoTitle}</span>
+                <span className="settings-row-desc">{STRINGS.settings.openIntoDesc}</span>
+              </div>
+              <SegmentedControl
+                value={settings?.openInto || 'home'}
+                options={[
+                  { value: 'home', label: 'Home' },
+                  { value: 'start', label: 'Start' },
+                  { value: 'charge', label: 'Charge' },
+                  { value: 'rescue', label: 'Rescue' },
+                ]}
+                onChange={handleOpenIntoChange}
+              />
+            </div>
+
+            {/* Ritual opening toggle */}
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">{STRINGS.settings.ritualTitle}</span>
+                <span className="settings-row-desc">{STRINGS.settings.ritualDesc}</span>
+              </div>
+              <Toggle
+                checked={settings?.ritualEnabled ?? true}
+                onChange={handleRitualToggle}
+                label={STRINGS.settings.ritualTitle}
+              />
+            </div>
+
+            {/* Ritual Scale */}
+            {settings?.ritualEnabled && (
+              <div className="settings-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                <div className="settings-row-info" style={{ marginBottom: 'var(--space-2)' }}>
+                  <span className="settings-row-label">{STRINGS.settings.ritualScaleTitle}</span>
+                </div>
+                <SegmentedControl
+                  value={settings?.ritualScale || 'auto'}
+                  options={[
+                    { value: 'auto', label: 'Auto' },
+                    { value: 'full', label: 'Full' },
+                    { value: 'short', label: 'Short' },
+                  ]}
+                  onChange={handleRitualScaleChange}
+                />
+              </div>
+            )}
+
+            {/* Sound On By Default */}
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">{STRINGS.settings.soundDefaultTitle}</span>
+                <span className="settings-row-desc">{STRINGS.settings.soundDefaultDesc}</span>
+              </div>
+              <Toggle
+                checked={settings?.soundOnByDefault ?? false}
+                onChange={handleSoundToggle}
+                label={STRINGS.settings.soundDefaultTitle}
+              />
+            </div>
+          </section>
+
+          {/* Manage Spaces & Modes */}
+          <section className="settings-card" aria-labelledby="spaces-heading">
+            <h2 id="spaces-heading" className="settings-card-title">
+              {STRINGS.settings.spacesSection}
+            </h2>
+
+            <div className="space-settings-item">
+              <div className="settings-row-info">
+                <span className="space-badge-name">
+                  {settings?.modes?.start?.label || 'Start'}
+                </span>
+                <span className="settings-row-desc">
+                  {settings?.modes?.start?.description || 'Morning intention'}
+                </span>
+              </div>
+              <Link to="/modes/start">
+                <Button variant="secondary" size="sm">
+                  Configure
+                </Button>
+              </Link>
+            </div>
+
+            <div className="space-settings-item">
+              <div className="settings-row-info">
+                <span className="space-badge-name">
+                  {settings?.modes?.charge?.label || 'Charge'}
+                </span>
+                <span className="settings-row-desc">
+                  {settings?.modes?.charge?.description || 'Gather energy'}
+                </span>
+              </div>
+              <Link to="/modes/charge">
+                <Button variant="secondary" size="sm">
+                  Configure
+                </Button>
+              </Link>
+            </div>
+
+            <div className="space-settings-item">
+              <div className="settings-row-info">
+                <span className="space-badge-name">
+                  {settings?.modes?.rescue?.label || 'Rescue'}
+                </span>
+                <span className="settings-row-desc">
+                  {settings?.modes?.rescue?.description || 'Low-friction push'}
+                </span>
+              </div>
+              <Link to="/modes/rescue">
+                <Button variant="secondary" size="sm">
+                  Configure
+                </Button>
+              </Link>
+            </div>
+          </section>
+
+          {/* Diagnostics Link */}
           <section className="settings-card" aria-labelledby="diag-heading">
             <h2 id="diag-heading" className="settings-card-title">
               {STRINGS.settings.devSection}

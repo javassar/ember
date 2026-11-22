@@ -1,4 +1,4 @@
-// Selection engine exports for pure session picking logic.
-// Implementation will be expanded in Milestone 5.
+// Public API exports for the Ember selection and session engine.
 
-export {};
+export * from './selection';
+export * from './sessionManager';

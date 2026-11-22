@@ -19,6 +19,11 @@ export const DEFAULT_ENGINE_STATE: EngineState = {
   sessionCounts: {
     lastSessionDate: '',
     countToday: 0,
+    modeCountsToday: {
+      start: 0,
+      charge: 0,
+      rescue: 0,
+    },
   },
 };
 
@@ -28,9 +33,29 @@ export async function getEngineState(): Promise<EngineState> {
   const record = await db.get('state', STATE_KEY);
 
   if (record) {
-    const state = { ...record };
+    const rec = record as unknown as Partial<EngineState>;
+    const state: EngineState = {
+      ...DEFAULT_ENGINE_STATE,
+      ...rec,
+      sessionCounts: {
+        ...DEFAULT_ENGINE_STATE.sessionCounts,
+        ...(rec.sessionCounts || {}),
+        modeCountsToday: {
+          ...DEFAULT_ENGINE_STATE.sessionCounts.modeCountsToday!,
+          ...(rec.sessionCounts?.modeCountsToday || {}),
+        },
+      },
+      bags: {
+        ...DEFAULT_ENGINE_STATE.bags,
+        ...(rec.bags || {}),
+      },
+      dailyPicks: {
+        ...DEFAULT_ENGINE_STATE.dailyPicks,
+        ...(rec.dailyPicks || {}),
+      },
+    };
     delete (state as { id?: string }).id;
-    return state as EngineState;
+    return state;
   }
 
   const initial = { ...DEFAULT_ENGINE_STATE, id: STATE_KEY };

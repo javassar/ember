@@ -9,7 +9,7 @@
 | **M2: Design system & Home** | **Done** | tokens.css, Fraunces/Inter fonts, living background, Home screen, styleguide |
 | **M3: Onboarding & Lock** | **Done** | Newcomer onboarding, WebCrypto PIN hashing, lock screen, privacy curtain |
 | **M4: Content management** | **Done** | Add/edit media (photo/video/text), posters, drag-and-drop, Library |
-| **M5: Sessions** | Not Started | Weighted selection engine, ritual orb, session viewer, mode settings |
+| **M5: Sessions** | **Done** | Weighted selection engine, ritual orb, session viewer, mode settings |
 | **M6: Habituation** | Not Started | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
 | **M7: Rescue next step** | Not Started | 2-minute action prompt, last-time tile reminder, next-steps library tab |
 | **M8: Backup & Settings** | Not Started | Zip export/import, storage meter, export reminders, settings completion |
@@ -39,12 +39,26 @@
   - **Drag-and-Drop**: Desktop overlay accepts media files dragged anywhere onto Library or Add screens.
   - **Library & Next Steps Screen**: Full-featured responsive grid with mode filtering, type filtering (text/photo/video), retired filtering, and an integrated Rescue Next Steps tab with check-off and delete.
   - **Item Detail & Edit**: Live editing of text/captions, cycling mode chips (Off, Rotating, Core), retiring/restoring items, viewing statistics, and permanent deletion with confirmation.
+- **M5 Core Sessions & Selection Engine**:
+  - **Selection Engine**: Pure mathematical functions in `src/engine/selection.ts` that prioritize core items first, followed by weighted draws from a persisted shuffle bag without replacement. Auto-refills when depleted. Boosts item weights dynamically based on recent "helped" events within a 90-day window (`1 + 0.4 * min(helps, 5)`). Implements local-day caching (`YYYY-MM-DD`) for daily refresh modes, with automatic replacement for any item retired mid-day.
+  - **Breath-Paced Ritual (`<Ritual />`)**: Glowing orb inhalation expansion and gentle dissolve. Auto-scales across daily opens (1st open: full 4.0s with mode cue text; 2nd open: short 1.5s; 3rd+ opens: none). Caps Rescue mode at the short ritual regardless of daily open counts. Fully skippable with a single tap at any time.
+  - **Finite Feed Session Viewer (`/session/:mode`)**:
+    - Dynamic text sizing with Fraunces display font by character count (<60 large, 60-160 medium, 160-400 regular, >400 small with scrolling), respecting user line breaks.
+    - Contained photos over blurred, darkened copies of themselves with elegant italic captions.
+    - Inline video playback with audio toggle, sound-on-by-default detection, tap-to-pause, and thin progress line.
+    - Media preloading and memory safety (automatic revocation of object URLs).
+    - Left 1/3 and right 2/3 tap navigation zones, horizontal touch swipe gestures, and arrow key support.
+    - Floating UI chrome that gently auto-hides after 2 seconds of inactivity and reappears on interaction.
+    - Immediate `ShowEvent` creation, live dwell duration calculation upon leaving items, and single-tap "This helped" toggle.
+    - End screen offering "Done" and "Show me more" (up to 3 additional items per session). In Rescue mode, seamlessly transitions to the 2-minute action step prompt.
+  - **Mode Customization (`/modes/:mode`)**: Direct customization of space labels, descriptions, and cues (with "Reset to defaults" fallback), rotating count adjusters (1-10), refresh policy selection (`daily` vs `each-session`), and core ordering controls (with manual Up/Down reordering when fixed and core warning notes above 5 items).
+  - **Open-Into Startup Setting**: Configurable startup destination ('Home', 'Start', 'Charge', 'Rescue') in Settings that directs the app to the chosen space on launch.
 
 ---
 
 ## Known Issues & Notes
 
-- *None.* All 40 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
+- *None.* All 61 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
 
 ---
 
