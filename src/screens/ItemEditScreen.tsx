@@ -54,9 +54,9 @@ export const ItemEditScreen: React.FC = () => {
   // Form State
   const [text, setText] = useState<string>('');
   const [modes, setModes] = useState<Record<Mode, Membership>>({
-    start: 'rotating',
-    charge: 'rotating',
-    rescue: 'rotating',
+    start: 'off',
+    charge: 'off',
+    rescue: 'off',
   });
   const [selectedFiles, setSelectedFiles] = useState<SelectedFilePreview[]>([]);
   const [existingItem, setExistingItem] = useState<Item | null>(null);

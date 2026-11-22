@@ -95,13 +95,15 @@
     - Added `<ErrorBoundary />` component catching unhandled rendering exceptions with a calm on-device recovery screen and reload trigger.
     - Added robots.txt, sitemap.xml, OpenGraph social sharing meta tags, and Schema.org JSON-LD `WebApplication` structured data for search and AI engine discovery.
     - Added catch-all route redirect (`<Route path="*" element={<Navigate to="/" replace />} />`) for safe 404 navigation handling.
+  - **Intentional Opt-In Space Assignment**:
+    - Updated `ItemEditScreen` so that newly added items default to `off` across all spaces (`start: 'off'`, `charge: 'off'`, `rescue: 'off'`) rather than automatically being placed in rotational pools. Users explicitly click to select which space(s) an item belongs to.
   - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---
 
 ## Known Issues & Notes
 
-- *None.* All 71 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
+- *None.* All 73 unit and integration tests pass, linter reports 0 problems, and the production build completes cleanly.
 
 ---
 
