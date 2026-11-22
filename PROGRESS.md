@@ -13,7 +13,7 @@
 | **M6: Habituation** | **Done** | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
 | **M7: Rescue next step** | **Done** | 2-minute action prompt, last-time tile reminder, next-steps library tab |
 | **M8: Backup & Settings** | **Done** | Zip export/import, storage meter, export reminders, settings completion |
-| **M9: Polish & Portfolio** | Not Started | Accessibility pass, time-of-day tints, performance audits, portfolio README |
+| **M9: Polish & Portfolio** | **Done** | Accessibility pass, time-of-day tints, performance audits, portfolio README |
 
 ---
 
@@ -74,6 +74,11 @@
   - **Storage Meter & Persistence**: Displays device storage used, percentage of quota, quota limit, and persistent storage grant status with one-tap protection request in Settings. Per-item file size is shown directly on cards in the Library.
   - **Export Reminder**: Shows a quiet reminder banner on Home when content has not been backed up within 30 days (`EXPORT_REMINDER_DAYS`) or has never been backed up.
   - **Settings Screen Completion**: Includes lock timeout selector, ritual toggle and scale, open-into destination, default sound toggle, space configuration links, storage meter, backup & restore actions, sample content loader, and full reset with irreversible `ERASE` confirmation.
+- **M9 Polish, Accessibility, Time-of-Day Tints, and Portfolio README**:
+  - **Time-of-Day LivingBackground Tints**: Added automatic subtle hue adjustments based on current local hour (morning warm amber shift 5am-12pm, natural afternoon daylight 12pm-6pm, twilight evening hue 6pm-5am). Filter effects are automatically disabled when `@media (prefers-reduced-motion: reduce)` is enabled.
+  - **Route Lazy Loading (`Suspense` & `React.lazy`)**: Split all 9 screen components into independent dynamic import chunks with a quiet loader fallback, keeping the initial JS bundle minimal.
+  - **Accessibility Audit**: Verified contrast, focus outlines, 44px minimum touch targets across all buttons and controls, and descriptive ARIA roles and labels.
+  - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---
 

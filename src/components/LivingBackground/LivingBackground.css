@@ -151,9 +151,28 @@
   animation-play-state: paused !important;
 }
 
-/* Reduced Motion Override: Static subtle gradient */
+/* Time of day tints (morning warmer gold, evening cooler twilight) */
+.ember-living-background.tint-morning {
+  filter: sepia(0.06) hue-rotate(-6deg);
+}
+
+.ember-living-background.tint-day {
+  filter: none;
+}
+
+.ember-living-background.tint-evening {
+  filter: hue-rotate(8deg) brightness(0.96);
+}
+
+/* Reduced Motion Override: Static subtle gradient without time shift */
 @media (prefers-reduced-motion: reduce) {
   .gradient-orb {
     animation: none !important;
+  }
+
+  .ember-living-background.tint-morning,
+  .ember-living-background.tint-day,
+  .ember-living-background.tint-evening {
+    filter: none !important;
   }
 }
