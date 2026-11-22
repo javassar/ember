@@ -15,3 +15,4 @@ export * from './LivingBackground/LivingBackground';
 export * from './Layout/ScreenLayout';
 export * from './DragDropOverlay/DragDropOverlay';
 export * from './Ritual/Ritual';
+export * from './ErrorBoundary/ErrorBoundary';

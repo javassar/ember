@@ -14,6 +14,7 @@ import {
   NumberPad,
   LivingBackground,
   ScreenLayout,
+  ErrorBoundary,
 } from './index';
 
 describe('UI Component System', () => {
@@ -138,5 +139,24 @@ describe('UI Component System', () => {
     );
     expect(html).toContain('ember-screen-layout--md');
     expect(html).toContain('Content');
+  });
+
+  it('renders children when no error occurs in ErrorBoundary', () => {
+    const html = renderToString(
+      <ErrorBoundary>
+        <div>Safe Content</div>
+      </ErrorBoundary>
+    );
+    expect(html).toContain('Safe Content');
+  });
+
+  it('renders error UI when ErrorBoundary catches an error', () => {
+    const boundary = new ErrorBoundary({ children: <div>Normal</div> });
+    const nextState = ErrorBoundary.getDerivedStateFromError(new Error('Test crash'));
+    expect(nextState.hasError).toBe(true);
+    boundary.state = nextState;
+    const html = renderToString(boundary.render() as React.ReactElement);
+    expect(html).toContain('Something paused unexpectedly');
+    expect(html).toContain('Reload Ember');
   });
 });

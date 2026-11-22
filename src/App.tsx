@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LockProvider, useLock } from './context/LockContext';
 import { LockOverlay } from './components/Lock/LockOverlay';
 import { PrivacyCurtain } from './components/PrivacyCurtain/PrivacyCurtain';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 
 // Lazy-load screen routes for optimal startup speed and memory efficiency
 const HomeScreen = lazy(() =>
@@ -96,6 +97,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/settings" element={<SettingsScreen />} />
           <Route path="/dev" element={<DevScreen />} />
           <Route path="/dev/styleguide" element={<StyleguideScreen />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </>
@@ -104,11 +106,13 @@ const AppRoutes: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <LockProvider>
-        <AppRoutes />
-      </LockProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <LockProvider>
+          <AppRoutes />
+        </LockProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 };
 

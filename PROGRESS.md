@@ -90,6 +90,11 @@
     - Updated `.filter-group` with `flex-wrap: nowrap;`, `white-space: nowrap;`, and 5px pill gaps so that all pills in each group (Spaces: All/Start/Charge/Rescue; Types: All/Text/Photos/Videos; Status: All Active/Retired/Not landing) stay cleanly on a single line on mobile screens.
     - Adjusted filter chip metrics (`padding: 4px 8px;`, `font-size: 0.75rem;`, `min-height: 32px;`, `gap: 5px;`, 6px indicator dots) so the rows fit comfortably within standard 375px+ mobile viewport widths without wrapping or awkward truncation.
     - Added hidden-scrollbar horizontal scroll fallbacks (`overflow-x: auto; scrollbar-width: none;`) to safeguard narrow or high-zoom displays.
+  - **Production Hardening, CI/CD, Error Boundary & SEO/AEO**:
+    - Created `.github/workflows/ci.yml` for automated GitHub Actions verification running unit/integration tests, ESLint, and production Vite builds on all pushes and PRs.
+    - Added `<ErrorBoundary />` component catching unhandled rendering exceptions with a calm on-device recovery screen and reload trigger.
+    - Added robots.txt, sitemap.xml, OpenGraph social sharing meta tags, and Schema.org JSON-LD `WebApplication` structured data for search and AI engine discovery.
+    - Added catch-all route redirect (`<Route path="*" element={<Navigate to="/" replace />} />`) for safe 404 navigation handling.
   - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---
