@@ -1,6 +1,7 @@
 // Placeholder Home screen displaying the Ember brand and skeleton layout.
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { APP_NAME } from '../config';
 import { STRINGS } from '../strings';
 import './HomeScreen.css';
@@ -20,6 +21,9 @@ export const HomeScreen: React.FC = () => {
           <span className="status-dot" aria-hidden="true" />
           {STRINGS.home.offlineReady}
         </span>
+        <Link to="/dev" className="dev-link">
+          Open Dev Diagnostics (/dev) →
+        </Link>
       </footer>
     </main>
   );

@@ -1,0 +1,199 @@
+/* Styles for the Developer Diagnostics screen. */
+
+.dev-screen {
+  min-height: 100dvh;
+  padding: calc(var(--space-6) + var(--safe-top))
+           calc(var(--space-5) + var(--safe-right))
+           calc(var(--space-8) + var(--safe-bottom))
+           calc(var(--space-5) + var(--safe-left));
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+}
+
+.dev-header {
+  margin-bottom: var(--space-6);
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 0.875rem;
+  color: var(--color-accent-start);
+  margin-bottom: var(--space-3);
+  padding: var(--space-1) 0;
+}
+
+.dev-title {
+  font-family: var(--font-content);
+  font-size: 1.875rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-2);
+}
+
+.dev-desc {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.status-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-accent-rescue);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  font-size: 0.875rem;
+  color: var(--color-accent-rescue);
+}
+
+.dismiss-btn {
+  font-size: 1.25rem;
+  line-height: 1;
+  color: inherit;
+  padding: 0 var(--space-1);
+}
+
+.dev-section {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.section-title {
+  font-family: var(--font-interface);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-3);
+  background-color: var(--color-bg-surface-elevated);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-quiet);
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-1);
+}
+
+.metric-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.metric-sub {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.action-link {
+  font-size: 0.75rem;
+  color: var(--color-accent-rescue);
+  text-align: left;
+  margin-top: var(--space-2);
+  text-decoration: underline;
+}
+
+.counts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.count-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-quiet);
+  font-size: 0.9375rem;
+}
+
+.count-row:last-child {
+  border-bottom: none;
+}
+
+.count-name {
+  color: var(--color-text-secondary);
+  font-family: monospace;
+  font-size: 0.8125rem;
+}
+
+.count-num {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.sample-tag {
+  color: var(--color-accent-start);
+  font-weight: normal;
+  font-size: 0.8125rem;
+}
+
+.actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--color-accent-start);
+  color: var(--color-bg-base);
+}
+
+.btn-secondary {
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+}
+
+.btn-danger {
+  background-color: rgba(255, 107, 107, 0.15);
+  border: 1px solid var(--color-accent-charge);
+  color: var(--color-accent-charge);
+}
+
+.btn-quiet {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+}

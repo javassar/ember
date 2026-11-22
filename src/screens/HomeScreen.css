@@ -85,6 +85,23 @@
   position: relative;
   z-index: 1;
   margin-top: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dev-link {
+  font-size: 0.8125rem;
+  color: var(--color-accent-start);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  opacity: 0.8;
+  padding: var(--space-1) var(--space-2);
+}
+
+.dev-link:hover {
+  opacity: 1;
 }
 
 .offline-pill {
