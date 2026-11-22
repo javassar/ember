@@ -54,11 +54,11 @@ export const OnboardingScreen: React.FC = () => {
   const handlePinDigit = (digit: string) => {
     setPinError(null);
     if (!isConfirming) {
-      if (typedPin.length < 8) {
+      if (typedPin.length < 4) {
         setTypedPin((prev) => prev + digit);
       }
     } else {
-      if (confirmPin.length < 8) {
+      if (confirmPin.length < 4) {
         setConfirmPin((prev) => prev + digit);
       }
     }
@@ -76,7 +76,7 @@ export const OnboardingScreen: React.FC = () => {
   const handleSavePinStep = async () => {
     if (!isConfirming) {
       if (typedPin.length < 4) {
-        setPinError('PIN must be at least 4 digits.');
+        setPinError('PIN must be exactly 4 digits.');
         return;
       }
       setIsConfirming(true);
