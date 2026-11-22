@@ -1,0 +1,39 @@
+/* Styles for the full-window DragDropOverlay. */
+
+.ember-drag-drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background-color: rgba(11, 11, 16, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: fadeIn var(--transition-fast);
+}
+
+.drag-drop-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-10);
+  background-color: var(--color-bg-surface-elevated);
+  border: 2px dashed var(--color-accent-start);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 0 32px rgba(244, 185, 122, 0.2);
+  text-align: center;
+}
+
+.drag-drop-icon {
+  font-size: 2.5rem;
+}
+
+.drag-drop-text {
+  font-family: var(--font-content);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--color-text-primary);
+}

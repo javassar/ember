@@ -7,6 +7,8 @@ import { LockOverlay } from './components/Lock/LockOverlay';
 import { PrivacyCurtain } from './components/PrivacyCurtain/PrivacyCurtain';
 import { HomeScreen } from './screens/HomeScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
+import { LibraryScreen } from './screens/LibraryScreen';
+import { ItemEditScreen } from './screens/ItemEditScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { DevScreen } from './screens/DevScreen';
 import { StyleguideScreen } from './screens/StyleguideScreen';
@@ -27,6 +29,9 @@ const AppRoutes: React.FC = () => {
           element={needsOnboarding ? <Navigate to="/onboarding" replace /> : <HomeScreen />}
         />
         <Route path="/onboarding" element={<OnboardingScreen />} />
+        <Route path="/library" element={<LibraryScreen />} />
+        <Route path="/library/new" element={<ItemEditScreen />} />
+        <Route path="/library/:id" element={<ItemEditScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
         <Route path="/dev" element={<DevScreen />} />
         <Route path="/dev/styleguide" element={<StyleguideScreen />} />

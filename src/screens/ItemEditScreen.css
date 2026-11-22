@@ -1,0 +1,245 @@
+/* Styles for the Item Add/Edit screen. */
+
+.item-edit-layout {
+  padding-bottom: var(--space-12);
+}
+
+.item-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.item-edit-title {
+  font-family: var(--font-content);
+  font-size: 1.875rem;
+  font-weight: 300;
+  color: var(--color-text-primary);
+}
+
+.item-edit-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-family: var(--font-interface);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.field-desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.caption-rule-hint {
+  font-size: 0.75rem;
+  color: var(--color-accent-start);
+  margin-top: var(--space-2);
+}
+
+.media-button-row {
+  display: flex;
+  margin-top: var(--space-2);
+}
+
+/* Selected files list */
+.selected-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.selected-file-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: var(--radius-md);
+}
+
+.preview-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.video-thumb-placeholder {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 107, 107, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: 1.25rem;
+}
+
+.selected-file-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.selected-file-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selected-file-size {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.remove-file-btn {
+  color: var(--color-text-secondary);
+  padding: var(--space-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.remove-file-btn:hover {
+  color: var(--color-accent-charge);
+}
+
+/* Existing Media Preview */
+.existing-media-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-quiet);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-2);
+}
+
+.existing-poster-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.existing-media-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.existing-media-type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent-start);
+}
+
+.existing-media-size {
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+}
+
+/* Mode chips row */
+.mode-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Stats box */
+.stats-box {
+  padding: var(--space-4);
+  background-color: var(--color-bg-surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-quiet);
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.stat-val {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Actions */
+.item-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.secondary-actions-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.secondary-actions-row button {
+  flex: 1;
+}
+
+.processing-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-accent-start);
+  border-radius: var(--radius-md);
+  color: var(--color-accent-start);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Delete Sheet */
+.delete-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  text-align: left;
+}
+
+.delete-sheet-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.delete-sheet-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
