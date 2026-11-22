@@ -1,0 +1,116 @@
+/* Styles for the placeholder Home screen. */
+
+.home-screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--space-8) + var(--safe-top))
+           calc(var(--space-6) + var(--safe-right))
+           calc(var(--space-8) + var(--safe-bottom))
+           calc(var(--space-6) + var(--safe-left));
+  background-color: var(--color-bg-base);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  width: 100%;
+}
+
+.ember-glow-orb {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(
+    circle,
+    rgba(244, 185, 122, 0.45) 0%,
+    rgba(255, 107, 107, 0.25) 50%,
+    rgba(11, 11, 16, 0) 75%
+  );
+  filter: blur(24px);
+  margin-bottom: var(--space-6);
+  pointer-events: none;
+  animation: breathe 6s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.app-title {
+  font-family: var(--font-content);
+  font-size: clamp(2.5rem, 8vw, 3.75rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+  line-height: 1.1;
+}
+
+.app-tagline {
+  font-family: var(--font-interface);
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.app-subtagline {
+  font-family: var(--font-interface);
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
+.home-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-8);
+}
+
+.offline-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-quiet);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-rescue);
+  box-shadow: 0 0 6px var(--color-accent-rescue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember-glow-orb {
+    animation: none;
+  }
+}
