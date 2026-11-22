@@ -105,6 +105,42 @@
   pointer-events: auto;
 }
 
+.session-chrome-bottom .ember-icon-btn--active {
+  color: var(--color-accent-charge);
+  background-color: rgba(255, 107, 107, 0.16);
+  border-color: rgba(255, 107, 107, 0.35);
+}
+
+.session-helped-toast {
+  position: absolute;
+  bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(22, 22, 31, 0.92);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--color-accent-charge);
+  font-family: var(--font-interface);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  animation: sessionToastFade 1.8s ease forwards;
+  z-index: 10;
+}
+
+@keyframes sessionToastFade {
+  0% { opacity: 0; transform: translate(-50%, 6px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  75% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
+}
+
 .session-nav-btn {
   display: flex;
   align-items: center;

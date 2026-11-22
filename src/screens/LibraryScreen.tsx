@@ -1,4 +1,4 @@
-// Library screen browsing content items and Rescue next steps with filters and thumbnail grid.
+// Library screen browsing content items and Rescue next steps with filters, thumbnail grid, and "Not landing" badges.
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ import {
   DragDropOverlay,
   SegmentedControl,
   Chip,
+  Toast,
 } from '../components';
 import {
   listItems,
@@ -21,8 +22,11 @@ import {
   listNextSteps,
   updateNextStep,
   deleteNextStep,
+  listEvents,
+  updateItem,
 } from '../data';
 import { STRINGS } from '../strings';
+import { findNotLandingItems } from '../engine';
 import type { Item, Mode, NextStep } from '../types';
 import './LibraryScreen.css';
 
@@ -40,29 +44,42 @@ export const LibraryScreen: React.FC = () => {
   // Filter States
   const [modeFilter, setModeFilter] = useState<Mode | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'text' | 'image' | 'video'>('all');
-  const [includeRetired, setIncludeRetired] = useState<boolean>(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'retired' | 'notLanding'>('all');
 
   // Data
   const [itemsWithPosters, setItemsWithPosters] = useState<ItemWithPoster[]>([]);
   const [nextSteps, setNextSteps] = useState<NextStep[]>([]);
+  const [notLandingMap, setNotLandingMap] = useState<Map<string, Mode[]>>(new Map());
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      // 1. Load items
+      // 1. Load items according to active filters
+      const includeRetired = statusFilter === 'retired';
       const rawItems = await listItems({
         mode: modeFilter === 'all' ? undefined : modeFilter,
         type: typeFilter === 'all' ? undefined : typeFilter,
         includeRetired,
       });
 
+      // 2. Load all events to compute "Not landing" habituation flags
+      const allEvents = await listEvents();
+      const notLanding = findNotLandingItems(rawItems, allEvents);
+      setNotLandingMap(notLanding);
+
+      // If status filter is 'notLanding', narrow down to only active items flagged as not landing
+      const filtered = statusFilter === 'notLanding'
+        ? rawItems.filter((i) => notLanding.has(i.id) && !i.retiredAt)
+        : rawItems;
+
       // Sort newest first
-      rawItems.sort((a, b) => b.createdAt - a.createdAt);
+      filtered.sort((a, b) => b.createdAt - a.createdAt);
 
       // Load thumbnails for media items
       const loaded: ItemWithPoster[] = await Promise.all(
-        rawItems.map(async (item) => {
+        filtered.map(async (item) => {
           let posterUrl: string | null = null;
           if (item.type !== 'text') {
             const posterRecord = await getPoster(item.id);
@@ -76,7 +93,7 @@ export const LibraryScreen: React.FC = () => {
 
       setItemsWithPosters(loaded);
 
-      // 2. Load next steps
+      // 3. Load Rescue next steps
       const steps = await listNextSteps();
       setNextSteps(steps);
     } catch (err) {
@@ -84,7 +101,7 @@ export const LibraryScreen: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [modeFilter, typeFilter, includeRetired]);
+  }, [modeFilter, typeFilter, statusFilter]);
 
   useEffect(() => {
     loadData();
@@ -107,6 +124,15 @@ export const LibraryScreen: React.FC = () => {
 
   const handleStepDelete = async (stepId: string) => {
     await deleteNextStep(stepId);
+    await loadData();
+  };
+
+  const handleOneTapRetire = async (item: Item) => {
+    await updateItem({
+      ...item,
+      retiredAt: Date.now(),
+    });
+    setToastMessage('Item retired.');
     await loadData();
   };
 
@@ -207,12 +233,26 @@ export const LibraryScreen: React.FC = () => {
                 />
               </div>
 
-              {/* Retired filter toggle */}
+              {/* Status filter chips (Active, Retired, Not landing) */}
               <div className="filter-group">
                 <Chip
-                  label={includeRetired ? 'Showing Retired' : 'Active Only'}
-                  selected={includeRetired}
-                  onClick={() => setIncludeRetired(!includeRetired)}
+                  label="All Active"
+                  selected={statusFilter === 'all'}
+                  onClick={() => setStatusFilter('all')}
+                />
+                <Chip
+                  label={STRINGS.library.filterRetired}
+                  selected={statusFilter === 'retired'}
+                  onClick={() => setStatusFilter('retired')}
+                />
+                <Chip
+                  label={
+                    notLandingMap.size > 0
+                      ? `${STRINGS.library.filterNotLanding} (${notLandingMap.size})`
+                      : STRINGS.library.filterNotLanding
+                  }
+                  selected={statusFilter === 'notLanding'}
+                  onClick={() => setStatusFilter('notLanding')}
                 />
               </div>
             </div>
@@ -225,63 +265,97 @@ export const LibraryScreen: React.FC = () => {
               </div>
             ) : itemsWithPosters.length === 0 ? (
               <div className="empty-library-card">
-                <p className="empty-title">{STRINGS.library.emptyItems}</p>
-                <p className="empty-sub">{STRINGS.library.emptyItemsHelp}</p>
-                <Link to="/library/new" style={{ marginTop: 'var(--space-4)' }}>
-                  <Button variant="secondary">{STRINGS.home.addContent}</Button>
-                </Link>
+                <p className="empty-title">
+                  {statusFilter === 'notLanding'
+                    ? 'No items are currently flagged as not landing.'
+                    : STRINGS.library.emptyItems}
+                </p>
+                <p className="empty-sub">
+                  {statusFilter === 'notLanding'
+                    ? 'Items appear here when shown 8+ times without being marked as helpful.'
+                    : STRINGS.library.emptyItemsHelp}
+                </p>
+                {statusFilter !== 'notLanding' && (
+                  <Link to="/library/new" style={{ marginTop: 'var(--space-4)' }}>
+                    <Button variant="secondary">{STRINGS.home.addContent}</Button>
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="items-grid">
-                {itemsWithPosters.map(({ item, posterUrl }) => (
-                  <article
-                    key={item.id}
-                    className={`library-item-card library-item-card--${item.type} ${
-                      item.retiredAt ? 'item-card--retired' : ''
-                    }`}
-                    onClick={() => navigate(`/library/${item.id}`)}
-                    tabIndex={0}
-                    role="button"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') navigate(`/library/${item.id}`);
-                    }}
-                  >
-                    {/* Media Thumbnail or Text Card Header */}
-                    {item.type !== 'text' && posterUrl ? (
-                      <div className="item-poster-container">
-                        <img
-                          src={posterUrl}
-                          alt={item.text || 'Item poster'}
-                          className="item-poster-img"
-                          loading="lazy"
-                        />
-                        <span className="item-type-badge">
-                          {item.type === 'video' ? '🎬' : '📷'}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="text-item-preview">
-                        <p className="text-body-snippet">“{item.text}”</p>
-                      </div>
-                    )}
+                {itemsWithPosters.map(({ item, posterUrl }) => {
+                  const isNotLanding = notLandingMap.has(item.id);
+                  const notLandingModes = notLandingMap.get(item.id) || [];
 
-                    {/* Card Footer Details */}
-                    <div className="item-card-footer">
-                      {item.type !== 'text' && item.text && (
-                        <p className="media-caption-snippet">{item.text}</p>
+                  return (
+                    <article
+                      key={item.id}
+                      className={`library-item-card library-item-card--${item.type} ${
+                        item.retiredAt ? 'item-card--retired' : ''
+                      }`}
+                      onClick={() => navigate(`/library/${item.id}`)}
+                      tabIndex={0}
+                      role="button"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') navigate(`/library/${item.id}`);
+                      }}
+                    >
+                      {/* Media Thumbnail or Text Card Header */}
+                      {item.type !== 'text' && posterUrl ? (
+                        <div className="item-poster-container">
+                          <img
+                            src={posterUrl}
+                            alt={item.text || 'Item poster'}
+                            className="item-poster-img"
+                            loading="lazy"
+                          />
+                          <span className="item-type-badge">
+                            {item.type === 'video' ? '🎬' : '📷'}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="text-item-preview">
+                          <p className="text-body-snippet">“{item.text}”</p>
+                        </div>
                       )}
 
-                      <div className="card-tags-row">
-                        {item.isSample && (
-                          <span className="sample-pill">{STRINGS.common.sampleBadge}</span>
+                      {/* Card Footer Details */}
+                      <div className="item-card-footer">
+                        {item.type !== 'text' && item.text && (
+                          <p className="media-caption-snippet">{item.text}</p>
                         )}
-                        {item.retiredAt && (
-                          <span className="retired-pill">{STRINGS.library.filterRetired}</span>
-                        )}
+
+                        <div className="card-tags-row">
+                          {item.isSample && (
+                            <span className="sample-pill">{STRINGS.common.sampleBadge}</span>
+                          )}
+                          {item.retiredAt && (
+                            <span className="retired-pill">{STRINGS.library.filterRetired}</span>
+                          )}
+                          {isNotLanding && !item.retiredAt && (
+                            <span className="not-landing-pill">
+                              {notLandingModes
+                                .map((m) => STRINGS.stats.notLandingLabel(m.charAt(0).toUpperCase() + m.slice(1)))
+                                .join(' • ')}
+                            </span>
+                          )}
+                          {isNotLanding && !item.retiredAt && (
+                            <button
+                              type="button"
+                              className="card-retire-shortcut"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOneTapRetire(item);
+                              }}
+                            >
+                              {STRINGS.common.retire}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             )}
           </main>
@@ -308,34 +382,39 @@ export const LibraryScreen: React.FC = () => {
                         type="button"
                         className={`step-checkbox ${isDone ? 'step-checkbox--checked' : ''}`}
                         onClick={() => handleStepToggleDone(step)}
-                        aria-label={isDone ? 'Mark as incomplete' : 'Mark as done'}
+                        aria-label={isDone ? 'Mark incomplete' : 'Mark complete'}
                       >
                         {isDone && <IconCheck size={16} />}
                       </button>
 
-                      <div className="step-card-content">
-                        <span className={`step-text ${isDone ? 'step-text--done' : ''}`}>
-                          {step.text}
-                        </span>
-                        <span className="step-date">
-                          {new Date(step.createdAt).toLocaleDateString()}
+                      <div className="nextstep-content">
+                        <span className="nextstep-text">{step.text}</span>
+                        <span className="nextstep-date">
+                          {new Date(step.createdAt).toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
                         </span>
                       </div>
 
-                      <button
-                        type="button"
-                        className="step-delete-btn"
-                        onClick={() => handleStepDelete(step.id)}
+                      <IconButton
                         aria-label={STRINGS.common.delete}
+                        variant="quiet"
+                        size="sm"
+                        onClick={() => handleStepDelete(step.id)}
                       >
-                        <IconClose size={18} />
-                      </button>
+                        <IconClose size={16} />
+                      </IconButton>
                     </div>
                   );
                 })}
               </div>
             )}
           </main>
+        )}
+
+        {toastMessage && (
+          <Toast message={toastMessage} onDismiss={() => setToastMessage(null)} />
         )}
       </ScreenLayout>
     </>

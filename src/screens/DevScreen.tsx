@@ -13,6 +13,7 @@ import {
   getEngineState,
   saveEngineState,
   listItems,
+  recordEvent,
   seedSampleContent,
   deleteSampleContent,
   clearAllData,
@@ -185,6 +186,40 @@ export const DevScreen: React.FC = () => {
     }
   };
 
+  const handleSimulateNotLanding = async () => {
+    setBusy(true);
+    try {
+      const items = await listItems({ mode: 'rescue', includeRetired: false });
+      if (items.length === 0) {
+        setStatusMessage('No active Rescue items found. Please seed sample content or add items first.');
+        return;
+      }
+      const targetItem = items[0];
+      const now = Date.now();
+      for (let i = 0; i < 8; i++) {
+        await recordEvent({
+          id: crypto.randomUUID(),
+          sessionId: crypto.randomUUID(),
+          itemId: targetItem.id,
+          mode: 'rescue',
+          shownAt: now - (8 - i) * 60000,
+          dwellMs: 4000,
+          helped: false,
+        });
+      }
+      const label = targetItem.text ? `"${targetItem.text.slice(0, 30)}..."` : targetItem.id.slice(0, 8);
+      setStatusMessage(
+        `Simulated 8 unhelpful shows in Rescue for item ${label}. Visit Library to see the "Not landing in Rescue" badge!`
+      );
+      await loadDiagnostics();
+    } catch (err) {
+      console.error('Simulate not landing failed:', err);
+      setStatusMessage('Failed to simulate not landing events.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <main className="dev-screen" role="main">
       <header className="dev-header">
@@ -316,6 +351,15 @@ export const DevScreen: React.FC = () => {
             disabled={busy}
           >
             Reset Daily Session Counts (Test Ritual Again)
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleSimulateNotLanding}
+            disabled={busy || !counts || counts.items === 0}
+          >
+            Simulate 8 Unhelpful Shows (Not Landing Test)
           </button>
 
           <button

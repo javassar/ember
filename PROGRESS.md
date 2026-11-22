@@ -10,7 +10,7 @@
 | **M3: Onboarding & Lock** | **Done** | Newcomer onboarding, WebCrypto PIN hashing, lock screen, privacy curtain |
 | **M4: Content management** | **Done** | Add/edit media (photo/video/text), posters, drag-and-drop, Library |
 | **M5: Sessions** | **Done** | Weighted selection engine, ritual orb, session viewer, mode settings |
-| **M6: Habituation** | Not Started | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
+| **M6: Habituation** | **Done** | "This helped" tracking, weighted draws, item stats, "Not landing" flags |
 | **M7: Rescue next step** | Not Started | 2-minute action prompt, last-time tile reminder, next-steps library tab |
 | **M8: Backup & Settings** | Not Started | Zip export/import, storage meter, export reminders, settings completion |
 | **M9: Polish & Portfolio** | Not Started | Accessibility pass, time-of-day tints, performance audits, portfolio README |
@@ -53,6 +53,17 @@
     - End screen offering "Done" and "Show me more" (up to 3 additional items per session). In Rescue mode, seamlessly transitions to the 2-minute action step prompt.
   - **Mode Customization (`/modes/:mode`)**: Direct customization of space labels, descriptions, and cues (with "Reset to defaults" fallback), rotating count adjusters (1-10), refresh policy selection (`daily` vs `each-session`), and core ordering controls (with manual Up/Down reordering when fixed and core warning notes above 5 items).
   - **Open-Into Startup Setting**: Configurable startup destination ('Home', 'Start', 'Charge', 'Rescue') in Settings that directs the app to the chosen space on launch.
+- **M6 Habituation Engine & Statistics**:
+  - **Habituation Pure Functions (`src/engine/habituation.ts`)**:
+    - `computeItemStats`: Aggregates total shows, total helped events, dwell time, and per-mode breakdowns across all historical events.
+    - `findNotLandingItems`: Flags items shown at least 8 times (`NOT_LANDING_MIN_SHOWS`) in a given mode with 0 "helped" events.
+  - **Cross-Mode Isolation**: "Helped" marks boost selection weight strictly within the active mode (`1 + 0.4 * min(helped, 5)`), keeping items independently calibrated across Start, Charge, and Rescue.
+  - **Library UI Enhancements**:
+    - "Not landing" filter chip in the library sub-header to inspect unhelpful items across all spaces.
+    - Prominent warning badges and a one-tap "Retire" shortcut button directly on item cards in the library grid.
+  - **Item Detail Screen (`/library/:id`)**:
+    - "Not landing in [Mode]" banner with one-tap retire action.
+    - Statistics section displaying total shows, times helped, average dwell time (in seconds), and per-space breakdowns (Start, Charge, Rescue).
 
 ---
 

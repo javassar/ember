@@ -59,6 +59,8 @@ export const SessionScreen: React.FC = () => {
   const currentEventRef = useRef<ShowEvent | null>(null);
   const itemShownAtRef = useRef<number>(0);
   const [currentHelped, setCurrentHelped] = useState(false);
+  const [helpedToast, setHelpedToast] = useState<string | null>(null);
+  const helpedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Touch gesture tracking for swipes
   const touchStartXRef = useRef<number | null>(null);
@@ -143,11 +145,14 @@ export const SessionScreen: React.FC = () => {
     });
   }, [items, currentIndex, mediaUrls]);
 
-  // Clean up object URLs on unmount
+  // Clean up object URLs and timers on unmount
   useEffect(() => {
     const urlsToRevoke = mediaUrls;
     return () => {
       urlsToRevoke.forEach((url) => URL.revokeObjectURL(url));
+      if (helpedTimeoutRef.current) {
+        clearTimeout(helpedTimeoutRef.current);
+      }
     };
   }, [mediaUrls]);
 
@@ -214,6 +219,15 @@ export const SessionScreen: React.FC = () => {
       const dwell = Date.now() - itemShownAtRef.current;
       await finalizeItemDwell(currentEventRef.current.id, dwell, nextState);
     }
+    if (helpedTimeoutRef.current) {
+      clearTimeout(helpedTimeoutRef.current);
+    }
+    setHelpedToast(
+      nextState ? STRINGS.session.helpedMarked : STRINGS.session.helpedUnmarked
+    );
+    helpedTimeoutRef.current = setTimeout(() => {
+      setHelpedToast(null);
+    }, 1800);
   };
 
   // "Show me more" handler
@@ -458,14 +472,16 @@ export const SessionScreen: React.FC = () => {
 
             <IconButton
               aria-label={STRINGS.accessibility.markHelped}
+              title={
+                currentHelped
+                  ? STRINGS.session.helpedUnmarked
+                  : STRINGS.session.thisHelped
+              }
               variant="quiet"
+              active={currentHelped}
               onClick={handleToggleHelped}
             >
-              <IconHelped
-                size={24}
-                active={currentHelped}
-                className={currentHelped ? 'text-accent-charge' : ''}
-              />
+              <IconHelped size={24} active={currentHelped} />
             </IconButton>
 
             <button
@@ -476,6 +492,13 @@ export const SessionScreen: React.FC = () => {
             >
               <IconForward size={20} />
             </button>
+          </div>
+        )}
+
+        {helpedToast && (
+          <div className="session-helped-toast" role="status" aria-live="polite">
+            <IconHelped size={14} active={true} />
+            <span>{helpedToast}</span>
           </div>
         )}
       </div>

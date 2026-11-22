@@ -33,6 +33,7 @@ import {
   type ProcessedMedia,
 } from '../lib/media';
 import { VIDEO_MAX_BYTES, VIDEO_WARN_BYTES } from '../config';
+import { computeItemStats } from '../engine';
 import { STRINGS } from '../strings';
 import type { Item, Mode, Membership, ShowEvent, PosterRecord, BlobRecord } from '../types';
 import './ItemEditScreen.css';
@@ -436,33 +437,77 @@ export const ItemEditScreen: React.FC = () => {
           </div>
 
           {/* Viewing Statistics (When editing an existing item) */}
-          {!isNew && existingItem && (
-            <div className="form-group stats-box">
-              <span className="field-label">{STRINGS.stats.title}</span>
-              <div className="stats-list">
-                <div className="stat-row">
-                  <span>{STRINGS.stats.timesShown}</span>
-                  <span className="stat-val">{itemEvents.length}</span>
+          {!isNew && existingItem && (() => {
+            const stats = computeItemStats(existingItem.id, itemEvents);
+            return (
+              <>
+                {/* Not Landing Banner */}
+                {stats.notLandingModes.length > 0 && !existingItem.retiredAt && (
+                  <div className="not-landing-banner">
+                    <span className="not-landing-text">
+                      {stats.notLandingModes
+                        .map((m) => STRINGS.stats.notLandingLabel(m.charAt(0).toUpperCase() + m.slice(1)))
+                        .join(' • ')}
+                    </span>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={handleRetireToggle}
+                    >
+                      {STRINGS.common.retire}
+                    </Button>
+                  </div>
+                )}
+
+                <div className="form-group stats-box">
+                  <span className="field-label">{STRINGS.stats.title}</span>
+                  <div className="stats-list">
+                    <div className="stat-row">
+                      <span>{STRINGS.stats.timesShown}</span>
+                      <span className="stat-val">{stats.totalShows}</span>
+                    </div>
+                    <div className="stat-row">
+                      <span>{STRINGS.stats.timesHelped}</span>
+                      <span className="stat-val">{stats.totalHelped}</span>
+                    </div>
+                    <div className="stat-row">
+                      <span>{STRINGS.stats.lastShown}</span>
+                      <span className="stat-val">
+                        {stats.lastShownAt
+                          ? new Date(stats.lastShownAt).toLocaleDateString()
+                          : STRINGS.stats.never}
+                      </span>
+                    </div>
+
+                    <div className="stats-divider" />
+
+                    <span className="field-desc" style={{ marginBottom: 'var(--space-1)' }}>
+                      Engagement by Space
+                    </span>
+
+                    {(['start', 'charge', 'rescue'] as Mode[]).map((m) => {
+                      const modeStat = stats.modes[m];
+                      return (
+                        <div key={m} className="mode-stat-subrow">
+                          <span className="mode-stat-name">
+                            {m.charAt(0).toUpperCase() + m.slice(1)}:
+                          </span>
+                          <span>
+                            {modeStat.shows} shown • {modeStat.helped} helped
+                            {modeStat.isNotLanding && (
+                              <span className="not-landing-pill" style={{ marginLeft: 'var(--space-2)' }}>
+                                Not landing
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="stat-row">
-                  <span>{STRINGS.stats.timesHelped}</span>
-                  <span className="stat-val">
-                    {itemEvents.filter((ev) => ev.helped).length}
-                  </span>
-                </div>
-                <div className="stat-row">
-                  <span>{STRINGS.stats.lastShown}</span>
-                  <span className="stat-val">
-                    {itemEvents.length > 0
-                      ? new Date(
-                          Math.max(...itemEvents.map((e) => e.shownAt))
-                        ).toLocaleDateString()
-                      : STRINGS.stats.never}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
+              </>
+            );
+          })()}
 
           {/* Action Buttons */}
           <div className="item-actions-stack">
