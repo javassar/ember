@@ -51,7 +51,7 @@
 }
 
 .ember-chip--state-core {
-  background-color: rgba(244, 185, 122, 0.15);
+  background-color: var(--color-accent-start-bg);
   border-color: var(--color-accent-start);
   color: var(--color-text-primary);
   font-weight: 600;
@@ -64,7 +64,7 @@
 
 /* Mode-specific Overrides */
 .ember-chip--mode-charge.ember-chip--state-core {
-  background-color: rgba(255, 107, 107, 0.15);
+  background-color: var(--color-accent-charge-bg);
   border-color: var(--color-accent-charge);
 }
 .ember-chip--mode-charge.ember-chip--state-core .chip-indicator,
@@ -74,7 +74,7 @@
 }
 
 .ember-chip--mode-rescue.ember-chip--state-core {
-  background-color: rgba(94, 201, 184, 0.15);
+  background-color: var(--color-accent-rescue-bg);
   border-color: var(--color-accent-rescue);
 }
 .ember-chip--mode-rescue.ember-chip--state-core .chip-indicator,

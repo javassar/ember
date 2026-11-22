@@ -56,7 +56,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-12) var(--space-6);
-  background-color: rgba(22, 22, 31, 0.6);
+  background-color: var(--color-bg-surface-glass);
   border: 1px solid var(--color-border-quiet);
   border-radius: var(--radius-xl);
   text-align: center;
@@ -85,7 +85,7 @@
 }
 
 .library-item-card {
-  background-color: rgba(22, 22, 31, 0.7);
+  background-color: var(--color-bg-surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border-quiet);
@@ -180,7 +180,7 @@
   font-size: 0.6875rem;
   font-weight: 500;
   color: var(--color-accent-start);
-  background-color: rgba(244, 185, 122, 0.12);
+  background-color: var(--color-accent-start-bg);
   padding: 1px 6px;
   border-radius: var(--radius-full);
 }
@@ -189,7 +189,7 @@
   font-size: 0.6875rem;
   font-weight: 500;
   color: var(--color-accent-charge);
-  background-color: rgba(255, 107, 107, 0.12);
+  background-color: var(--color-accent-charge-bg);
   padding: 1px 6px;
   border-radius: var(--radius-full);
 }
@@ -198,7 +198,7 @@
   font-size: 0.6875rem;
   font-weight: 500;
   color: var(--color-text-tertiary);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--color-border-quiet);
   padding: 1px 6px;
   border-radius: var(--radius-full);
 }
@@ -206,17 +206,17 @@
 .not-landing-pill {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #ff8e8e;
-  background-color: rgba(255, 107, 107, 0.18);
-  border: 1px solid rgba(255, 107, 107, 0.35);
+  color: var(--color-accent-charge);
+  background-color: var(--color-accent-charge-bg);
+  border: 1px solid var(--color-accent-charge);
   padding: 1px 6px;
   border-radius: var(--radius-full);
 }
 
 .card-retire-shortcut {
   background: none;
-  border: 1px solid rgba(255, 107, 107, 0.4);
-  color: #ff8e8e;
+  border: 1px solid var(--color-accent-charge);
+  color: var(--color-accent-charge);
   border-radius: var(--radius-sm);
   padding: 1px 6px;
   font-size: 0.6875rem;
@@ -227,8 +227,8 @@
 }
 
 .card-retire-shortcut:hover {
-  background-color: rgba(255, 107, 107, 0.2);
-  color: #fff;
+  background-color: var(--color-accent-charge);
+  color: var(--color-bg-base);
 }
 
 .item-card--retired {

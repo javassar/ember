@@ -11,7 +11,7 @@ import {
 import { clearAllData } from '../data/sampleContent';
 import { verifyPin, hashPin } from '../lib/crypto';
 import { shouldLock, computeWrongAttemptDelay, isBlocked, getRemainingBlockSeconds } from '../lib/lock';
-import type { Settings } from '../types';
+import type { Settings, ThemePreference } from '../types';
 
 const LAST_ACTIVE_KEY = 'ember_last_active_at';
 
@@ -30,6 +30,8 @@ export interface LockContextValue {
   completeOnboarding: () => Promise<void>;
   resetAndErase: () => Promise<void>;
   refreshSettings: () => Promise<void>;
+  theme: ThemePreference;
+  toggleTheme: () => Promise<void>;
 }
 
 const LockContext = createContext<LockContextValue | null>(null);
@@ -222,6 +224,53 @@ export const LockProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await refreshSettings();
   };
 
+  const currentTheme: ThemePreference = settings?.theme ?? 'dark';
+
+  const applyThemeToDOM = useCallback((pref: ThemePreference) => {
+    let effective: 'dark' | 'light' = 'dark';
+    if (pref === 'system') {
+      const prefersLight =
+        typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: light)').matches;
+      effective = prefersLight ? 'light' : 'dark';
+    } else {
+      effective = pref;
+    }
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', effective);
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) {
+        meta.setAttribute('content', effective === 'light' ? '#FAF8F5' : '#0B0B10');
+      }
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ember_theme', pref);
+    }
+  }, []);
+
+  useEffect(() => {
+    applyThemeToDOM(currentTheme);
+
+    if (currentTheme === 'system' && typeof window !== 'undefined' && window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: light)');
+      const listener = () => applyThemeToDOM('system');
+      mq.addEventListener('change', listener);
+      return () => mq.removeEventListener('change', listener);
+    }
+  }, [currentTheme, applyThemeToDOM]);
+
+  const toggleTheme = useCallback(async () => {
+    const active =
+      typeof document !== 'undefined'
+        ? (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark'
+        : 'dark';
+    const next: 'dark' | 'light' = active === 'light' ? 'dark' : 'light';
+    const updated = await saveSettings({ theme: next });
+    setSettings(updated);
+    applyThemeToDOM(next);
+  }, [applyThemeToDOM]);
+
   const value: LockContextValue = {
     isLocked,
     hasPin: settings?.pin !== null,
@@ -237,6 +286,8 @@ export const LockProvider: React.FC<{ children: React.ReactNode }> = ({ children
     completeOnboarding,
     resetAndErase,
     refreshSettings,
+    theme: currentTheme,
+    toggleTheme,
   };
 
   return <LockContext.Provider value={value}>{children}</LockContext.Provider>;

@@ -6,7 +6,7 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
-  background-color: rgba(22, 22, 31, 0.6);
+  background-color: var(--color-bg-surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -15,12 +15,12 @@
   width: 6px;
   height: 6px;
   border-radius: var(--radius-full);
-  background-color: rgba(243, 239, 232, 0.2);
+  background-color: var(--color-border-subtle);
   transition: all var(--transition-fast);
 }
 
 .dot--passed {
-  background-color: rgba(243, 239, 232, 0.45);
+  background-color: var(--color-text-secondary);
 }
 
 .dot--active {

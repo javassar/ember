@@ -145,16 +145,16 @@
   border: 1px solid var(--color-border-subtle);
 }
 .swatch--elevated {
-  background-color: #1f1f2b;
+  background-color: var(--color-bg-surface-elevated);
 }
 .swatch--start {
-  background-color: #f4b97a;
+  background-color: var(--color-accent-start);
 }
 .swatch--charge {
-  background-color: #ff6b6b;
+  background-color: var(--color-accent-charge);
 }
 .swatch--rescue {
-  background-color: #5ec9b8;
+  background-color: var(--color-accent-rescue);
 }
 
 .swatch-name {

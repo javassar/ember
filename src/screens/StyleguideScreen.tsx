@@ -94,21 +94,21 @@ export const StyleguideScreen: React.FC = () => {
               modeAccent={bgMode === 'start' ? 'start' : undefined}
               onClick={() => setBgMode('start')}
             >
-              Start (Warm Amber)
+              Start (Sunrise Honey)
             </Button>
             <Button
               variant={bgMode === 'charge' ? 'primary' : 'secondary'}
               modeAccent={bgMode === 'charge' ? 'charge' : undefined}
               onClick={() => setBgMode('charge')}
             >
-              Charge (Hot Coral)
+              Charge (Radiant Crimson)
             </Button>
             <Button
               variant={bgMode === 'rescue' ? 'primary' : 'secondary'}
               modeAccent={bgMode === 'rescue' ? 'rescue' : undefined}
               onClick={() => setBgMode('rescue')}
             >
-              Rescue (Calm Teal)
+              Rescue (Twilight Iris)
             </Button>
           </div>
         </section>
@@ -170,17 +170,17 @@ export const StyleguideScreen: React.FC = () => {
             <div className="swatch-card">
               <div className="swatch-box swatch--start" />
               <span className="swatch-name">Start Accent</span>
-              <span className="swatch-code">#F4B97A</span>
+              <span className="swatch-code">#F0A35B</span>
             </div>
             <div className="swatch-card">
               <div className="swatch-box swatch--charge" />
               <span className="swatch-name">Charge Accent</span>
-              <span className="swatch-code">#FF6B6B</span>
+              <span className="swatch-code">#FF5459</span>
             </div>
             <div className="swatch-card">
               <div className="swatch-box swatch--rescue" />
               <span className="swatch-name">Rescue Accent</span>
-              <span className="swatch-code">#5EC9B8</span>
+              <span className="swatch-code">#7B8CE2</span>
             </div>
           </div>
         </section>

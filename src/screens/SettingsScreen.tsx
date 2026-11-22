@@ -122,6 +122,11 @@ export const SettingsScreen: React.FC = () => {
     setToastMessage(soundOn ? 'Sound on by default enabled.' : 'Sound on by default disabled.');
   };
 
+  const handleThemeChange = async (val: string) => {
+    await updateSettings({ theme: val as 'system' | 'dark' | 'light' });
+    setToastMessage('Appearance updated.');
+  };
+
   const openPinModal = (mode: 'create' | 'change' | 'remove') => {
     setPinModalMode(mode);
     setEnteredNewPin('');
@@ -346,11 +351,28 @@ export const SettingsScreen: React.FC = () => {
             </div>
           </section>
 
-          {/* Preferences: Open-Into, Ritual, Sound */}
+          {/* Preferences: Appearance, Open-Into, Ritual, Sound */}
           <section className="settings-card" aria-labelledby="pref-heading">
             <h2 id="pref-heading" className="settings-card-title">
               {STRINGS.settings.preferencesSection}
             </h2>
+
+            {/* Appearance / Theme */}
+            <div className="settings-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+              <div className="settings-row-info" style={{ marginBottom: 'var(--space-2)' }}>
+                <span className="settings-row-label">{STRINGS.settings.appearanceTitle}</span>
+                <span className="settings-row-desc">{STRINGS.settings.appearanceDesc}</span>
+              </div>
+              <SegmentedControl
+                value={settings?.theme || 'dark'}
+                options={[
+                  { value: 'dark', label: STRINGS.settings.themeDark },
+                  { value: 'light', label: STRINGS.settings.themeLight },
+                  { value: 'system', label: STRINGS.settings.themeSystem },
+                ]}
+                onChange={handleThemeChange}
+              />
+            </div>
 
             {/* Open Into */}
             <div className="settings-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
@@ -442,7 +464,7 @@ export const SettingsScreen: React.FC = () => {
                 <span className="space-badge-name">
                   {settings?.modes?.charge?.label || 'Charge'}
                 </span>
-                <span className="space-badge-name">
+                <span className="settings-row-desc">
                   {settings?.modes?.charge?.description || 'Gather energy'}
                 </span>
               </div>

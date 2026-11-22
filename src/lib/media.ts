@@ -105,7 +105,7 @@ export function createFallbackPoster(width = 480, height = 320): Blob {
     </radialGradient>
   </defs>
   <rect width="${width}" height="${height}" fill="url(#grad)"/>
-  <circle cx="${width / 2}" cy="${height / 2}" r="32" fill="#F4B97A" opacity="0.3"/>
+  <circle cx="${width / 2}" cy="${height / 2}" r="32" fill="#F0A35B" opacity="0.3"/>
   <polygon points="${width / 2 - 8},${height / 2 - 12} ${width / 2 + 14},${height / 2} ${width / 2 - 8},${height / 2 + 12}" fill="#F3EFE8"/>
 </svg>
 `.trim();

@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background-color: rgba(11, 11, 16, 0.85);
+  background-color: var(--color-backdrop);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   display: flex;
@@ -23,7 +23,7 @@
   background-color: var(--color-bg-surface-elevated);
   border: 2px dashed var(--color-accent-start);
   border-radius: var(--radius-xl);
-  box-shadow: 0 0 32px rgba(244, 185, 122, 0.2);
+  box-shadow: 0 0 32px var(--color-accent-start-glow);
   text-align: center;
 }
 

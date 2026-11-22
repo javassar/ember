@@ -27,7 +27,6 @@ Ember is designed to be shaped by you from your very first open. It is a complet
 
 ## Screenshots
 
-<!-- Jackie: Drop your screenshots into a /screenshots directory in the repository to display them here! -->
 
 | Home Screen | Breath Ritual | Finite Session Feed |
 | :---: | :---: | :---: |
@@ -106,6 +105,8 @@ You determine how content is metered:
 4. **Pacing & Typography**: Generous whitespace, Fraunces serif display typography, and breath-paced visual transitions create a sense of calm.
 5. **Forgiving Security**: A custom numeric PIN keypad that protects privacy while preventing lockout panics through timestamped delays.
 6. **Habituation Intelligence**: Tracks what actually helps you per space over time, flagging items that are "not landing" with one-tap retirement so your spaces remain fresh.
+
+7. **Intentional Palette & Dual Themes**: An intentional color system (Sunrise Honey, Radiant Crimson Red, and Twilight Iris) designed to avoid stop-light associations while keeping Charge fiery and motivated. Features a full, paper-warm Light Theme alongside the signature deep dark hearth, switchable in one tap.
 
 ---
 
@@ -194,7 +195,6 @@ npm run build
 ## What Comes Next (Later List)
 
 - **Optional Encrypted Storage**: Key derivation using user PIN to encrypt blobs on disk.
-- **Light Theme**: Automatic or toggleable light palette for daytime outdoor reading.
 - **Shortcuts Integration**: Personal iOS Shortcut automations to trigger sessions at set times of day.
 - **Weekly Review Summary**: A quiet reflection screen summarizing what helped most over the past 7 days.
 - **Additional Languages**: Localization framework powered by Ember's centralized string dictionary (`src/strings.ts`).

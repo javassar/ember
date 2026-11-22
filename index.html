@@ -9,6 +9,22 @@
     <meta name="theme-color" content="#0B0B10" />
     <meta name="description" content="A private, quiet space for deliberate content." />
 
+    <!-- Immediate Theme Hydration (Prevents flash of dark/light theme on initial load) -->
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('ember_theme') || 'dark';
+          var eff = t;
+          if (t === 'system') {
+            eff = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          document.documentElement.setAttribute('data-theme', eff);
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', eff === 'light' ? '#FAF8F5' : '#0B0B10');
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Mobile Web App Tags -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />

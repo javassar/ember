@@ -2,6 +2,7 @@
 
 export type Mode = 'start' | 'charge' | 'rescue';
 export type Membership = 'off' | 'rotating' | 'core';
+export type ThemePreference = 'system' | 'dark' | 'light';
 
 export interface Item {
   id: string;
@@ -74,6 +75,7 @@ export interface Settings {
   onboardingDone: boolean;
   lastExportAt: number | null;
   modes: Record<Mode, ModeConfig>;
+  theme?: ThemePreference;
 }
 
 export interface EngineState {

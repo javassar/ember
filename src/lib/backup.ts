@@ -61,6 +61,7 @@ export async function buildManifest(): Promise<BackupManifest> {
     onboardingDone: settings.onboardingDone,
     lastExportAt: settings.lastExportAt,
     modes: settings.modes,
+    theme: settings.theme ?? 'dark',
   };
 
   return {

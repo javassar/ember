@@ -43,15 +43,15 @@
 
 /* Mode-specific orb glow gradients */
 .ritual-orb--start {
-  background: radial-gradient(circle, var(--color-accent-start) 0%, rgba(244, 185, 122, 0) 70%);
+  background: radial-gradient(circle, var(--color-accent-start) 0%, transparent 70%);
 }
 
 .ritual-orb--charge {
-  background: radial-gradient(circle, var(--color-accent-charge) 0%, rgba(255, 107, 107, 0) 70%);
+  background: radial-gradient(circle, var(--color-accent-charge) 0%, transparent 70%);
 }
 
 .ritual-orb--rescue {
-  background: radial-gradient(circle, var(--color-accent-rescue) 0%, rgba(94, 201, 184, 0) 70%);
+  background: radial-gradient(circle, var(--color-accent-rescue) 0%, transparent 70%);
 }
 
 /* Full ritual animation (4000ms inhale expansion & gentle dissolve) */

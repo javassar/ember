@@ -208,8 +208,8 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background-color: rgba(255, 107, 107, 0.12);
-  border: 1px solid rgba(255, 107, 107, 0.35);
+  background-color: var(--color-accent-charge-bg);
+  border: 1px solid var(--color-accent-charge);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
 }
@@ -217,15 +217,15 @@
 .not-landing-text {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #ff8e8e;
+  color: var(--color-accent-charge);
 }
 
 .not-landing-pill {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #ff8e8e;
-  background-color: rgba(255, 107, 107, 0.18);
-  border: 1px solid rgba(255, 107, 107, 0.35);
+  color: var(--color-accent-charge);
+  background-color: var(--color-accent-charge-bg);
+  border: 1px solid var(--color-accent-charge);
   padding: 1px 6px;
   border-radius: var(--radius-full);
 }

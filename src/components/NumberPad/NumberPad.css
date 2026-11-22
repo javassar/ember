@@ -27,13 +27,13 @@
 }
 
 .pad-key:hover:not(:disabled) {
-  background-color: rgba(243, 239, 232, 0.1);
+  background-color: var(--color-border-subtle);
   border-color: var(--color-border-focus);
 }
 
 .pad-key:active:not(:disabled) {
   transform: scale(0.92);
-  background-color: rgba(243, 239, 232, 0.18);
+  background-color: var(--color-border-focus);
 }
 
 .pad-key:disabled {

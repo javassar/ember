@@ -10,7 +10,10 @@ import {
   IconButton,
   IconLibrary,
   IconSettings,
+  IconSun,
+  IconMoon,
 } from '../components';
+import { useLock } from '../context/LockContext';
 import { listNextSteps, updateNextStep, getSettings, countItems } from '../data';
 import type { Mode, NextStep, ModeConfig } from '../types';
 import './HomeScreen.css';
@@ -27,10 +30,27 @@ const getDismissedStepIds = (): string[] => {
 
 export const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { toggleTheme } = useLock();
   const [activeAccent, setActiveAccent] = useState<Mode | 'home'>('home');
   const [modesConfig, setModesConfig] = useState<Record<Mode, ModeConfig>>(DEFAULT_MODE_CONFIGS);
   const [lastRescueStep, setLastRescueStep] = useState<NextStep | null>(null);
   const [showExportReminder, setShowExportReminder] = useState<boolean>(false);
+  const [currentDataTheme, setCurrentDataTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof document !== 'undefined') {
+      return (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const observer = new MutationObserver(() => {
+      const val = (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark';
+      setCurrentDataTheme(val);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
 
   const loadHomeData = useCallback(async () => {
     try {
@@ -106,6 +126,13 @@ export const HomeScreen: React.FC = () => {
           </div>
 
           <nav className="home-nav" aria-label="Quick Navigation">
+            <IconButton
+              aria-label={currentDataTheme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
+              variant="quiet"
+              onClick={toggleTheme}
+            >
+              {currentDataTheme === 'light' ? <IconMoon size={22} /> : <IconSun size={22} />}
+            </IconButton>
             <Link to="/library" tabIndex={-1}>
               <IconButton aria-label={STRINGS.accessibility.openLibrary} variant="quiet">
                 <IconLibrary size={22} />

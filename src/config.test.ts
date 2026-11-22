@@ -12,6 +12,7 @@ import {
   DEFAULT_MODE_CONFIGS,
   DEFAULT_SETTINGS,
   COLORS,
+  LIGHT_COLORS,
 } from './config';
 
 describe('Config Constants', () => {
@@ -54,9 +55,14 @@ describe('Config Constants', () => {
 
   it('defines theme colors with required contrast and accents', () => {
     expect(COLORS.bgBase).toBe('#0B0B10');
-    expect(COLORS.start).toBe('#F4B97A');
-    expect(COLORS.charge).toBe('#FF6B6B');
-    expect(COLORS.rescue).toBe('#5EC9B8');
+    expect(COLORS.start).toBe('#F0A35B');
+    expect(COLORS.charge).toBe('#FF5459');
+    expect(COLORS.rescue).toBe('#7B8CE2');
+
+    expect(LIGHT_COLORS.bgBase).toBe('#FAF8F5');
+    expect(LIGHT_COLORS.start).toBe('#B85600');
+    expect(LIGHT_COLORS.charge).toBe('#CC1B24');
+    expect(LIGHT_COLORS.rescue).toBe('#3B42CC');
   });
 
   it('provides valid default settings', () => {
@@ -64,5 +70,6 @@ describe('Config Constants', () => {
     expect(DEFAULT_SETTINGS.openInto).toBe('home');
     expect(DEFAULT_SETTINGS.ritualEnabled).toBe(true);
     expect(DEFAULT_SETTINGS.onboardingDone).toBe(false);
+    expect(DEFAULT_SETTINGS.theme).toBe('dark');
   });
 });

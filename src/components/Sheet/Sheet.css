@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background-color: rgba(11, 11, 16, 0.7);
+  background-color: var(--color-backdrop);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;

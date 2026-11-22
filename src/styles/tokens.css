@@ -1,10 +1,13 @@
 /* Design tokens for Ember: colors, typography, spacing, radius, and timing. */
 
 :root {
-  /* Colors */
+  /* Colors - Dark (Default) */
   --color-bg-base: #0b0b10;
   --color-bg-surface: #16161f;
   --color-bg-surface-elevated: #1f1f2b;
+  --color-bg-surface-glass: rgba(22, 22, 31, 0.75);
+  --color-backdrop: rgba(11, 11, 16, 0.75);
+
   --color-text-primary: #f3efe8;
   --color-text-secondary: rgba(243, 239, 232, 0.6);
   --color-text-tertiary: rgba(243, 239, 232, 0.38);
@@ -13,10 +16,25 @@
   --color-border-subtle: rgba(243, 239, 232, 0.16);
   --color-border-focus: rgba(243, 239, 232, 0.4);
 
-  /* Mode Accents */
-  --color-accent-start: #f4b97a;
-  --color-accent-charge: #ff6b6b;
-  --color-accent-rescue: #5ec9b8;
+  /* Mode Accents - Dark */
+  /* Start = Sunrise Honey, Charge = Radiant Crimson, Rescue = Twilight Iris */
+  --color-accent-start: #f0a35b;
+  --color-accent-start-bg: rgba(240, 163, 91, 0.14);
+  --color-accent-start-border: rgba(240, 163, 91, 0.28);
+  --color-accent-start-glow: rgba(240, 163, 91, 0.35);
+
+  --color-accent-charge: #ff5459;
+  --color-accent-charge-bg: rgba(255, 84, 89, 0.14);
+  --color-accent-charge-border: rgba(255, 84, 89, 0.28);
+  --color-accent-charge-glow: rgba(255, 84, 89, 0.35);
+
+  --color-accent-rescue: #7b8ce2;
+  --color-accent-rescue-bg: rgba(123, 140, 226, 0.14);
+  --color-accent-rescue-border: rgba(123, 140, 226, 0.28);
+  --color-accent-rescue-glow: rgba(123, 140, 226, 0.35);
+
+  --shadow-elevated: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
 
   /* Typography */
   --font-content: 'Fraunces Variable', Georgia, serif;
@@ -52,6 +70,80 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
+}
+
+/* Light Mode Tokens (Paper / Warm Alabaster) */
+:root[data-theme="light"],
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    --color-bg-base: #faf8f5;
+    --color-bg-surface: #ffffff;
+    --color-bg-surface-elevated: #f2efe9;
+    --color-bg-surface-glass: rgba(255, 255, 255, 0.92);
+    --color-backdrop: rgba(26, 24, 22, 0.45);
+
+    --color-text-primary: #1a1816;
+    --color-text-secondary: rgba(26, 24, 22, 0.7);
+    --color-text-tertiary: rgba(26, 24, 22, 0.45);
+
+    --color-border-quiet: rgba(26, 24, 22, 0.1);
+    --color-border-subtle: rgba(26, 24, 22, 0.18);
+    --color-border-focus: rgba(26, 24, 22, 0.42);
+
+    /* Mode Accents - Light: Punchy, vibrant, high-visibility tones */
+    --color-accent-start: #b85600;
+    --color-accent-start-bg: rgba(184, 86, 0, 0.16);
+    --color-accent-start-border: rgba(184, 86, 0, 0.32);
+    --color-accent-start-glow: rgba(184, 86, 0, 0.28);
+
+    --color-accent-charge: #cc1b24;
+    --color-accent-charge-bg: rgba(204, 27, 36, 0.16);
+    --color-accent-charge-border: rgba(204, 27, 36, 0.32);
+    --color-accent-charge-glow: rgba(204, 27, 36, 0.28);
+
+    --color-accent-rescue: #3b42cc;
+    --color-accent-rescue-bg: rgba(59, 66, 204, 0.16);
+    --color-accent-rescue-border: rgba(59, 66, 204, 0.32);
+    --color-accent-rescue-glow: rgba(59, 66, 204, 0.28);
+
+    --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+}
+
+:root[data-theme="light"] {
+  --color-bg-base: #faf8f5;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-elevated: #f2efe9;
+  --color-bg-surface-glass: rgba(255, 255, 255, 0.92);
+  --color-backdrop: rgba(26, 24, 22, 0.45);
+
+  --color-text-primary: #1a1816;
+  --color-text-secondary: rgba(26, 24, 22, 0.7);
+  --color-text-tertiary: rgba(26, 24, 22, 0.45);
+
+  --color-border-quiet: rgba(26, 24, 22, 0.1);
+  --color-border-subtle: rgba(26, 24, 22, 0.18);
+  --color-border-focus: rgba(26, 24, 22, 0.42);
+
+  /* Mode Accents - Light: Punchy, vibrant, high-visibility tones */
+  --color-accent-start: #b85600;
+  --color-accent-start-bg: rgba(184, 86, 0, 0.16);
+  --color-accent-start-border: rgba(184, 86, 0, 0.32);
+  --color-accent-start-glow: rgba(184, 86, 0, 0.28);
+
+  --color-accent-charge: #cc1b24;
+  --color-accent-charge-bg: rgba(204, 27, 36, 0.16);
+  --color-accent-charge-border: rgba(204, 27, 36, 0.32);
+  --color-accent-charge-glow: rgba(204, 27, 36, 0.28);
+
+  --color-accent-rescue: #3b42cc;
+  --color-accent-rescue-bg: rgba(59, 66, 204, 0.16);
+  --color-accent-rescue-border: rgba(59, 66, 204, 0.32);
+  --color-accent-rescue-glow: rgba(59, 66, 204, 0.28);
+
+  --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {

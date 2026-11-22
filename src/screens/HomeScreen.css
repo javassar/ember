@@ -54,8 +54,8 @@
 .home-export-banner {
   margin-bottom: var(--space-6);
   padding: var(--space-4) var(--space-5);
-  background-color: rgba(244, 185, 122, 0.08);
-  border: 1px solid rgba(244, 185, 122, 0.25);
+  background-color: var(--color-accent-start-bg);
+  border: 1px solid var(--color-accent-start);
   border-radius: var(--radius-lg);
   display: flex;
   justify-content: space-between;
@@ -88,14 +88,14 @@
   text-decoration: none;
   white-space: nowrap;
   padding: var(--space-2) var(--space-3);
-  background: rgba(244, 185, 122, 0.12);
+  background: var(--color-accent-start-bg);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
 
 .export-banner-link:hover {
-  background: rgba(244, 185, 122, 0.22);
-  color: #fff;
+  background: var(--color-accent-start);
+  color: var(--color-bg-base);
 }
 
 .modes-container {
@@ -111,7 +111,7 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-5) var(--space-6);
-  background-color: rgba(22, 22, 31, 0.7);
+  background-color: var(--color-bg-surface-glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--color-border-quiet);
@@ -127,7 +127,7 @@
 
 .mode-tile:hover {
   transform: translateY(-2px);
-  background-color: rgba(31, 31, 43, 0.8);
+  background-color: var(--color-bg-surface-elevated);
 }
 
 .mode-tile:active {
@@ -156,7 +156,7 @@
   background-color: var(--color-accent-start);
 }
 .mode-tile--start:hover {
-  border-color: rgba(244, 185, 122, 0.4);
+  border-color: var(--color-accent-start);
 }
 
 /* Charge Tile */
@@ -164,7 +164,7 @@
   background-color: var(--color-accent-charge);
 }
 .mode-tile--charge:hover {
-  border-color: rgba(255, 107, 107, 0.4);
+  border-color: var(--color-accent-charge);
 }
 
 /* Rescue Tile */
@@ -172,7 +172,35 @@
   background-color: var(--color-accent-rescue);
 }
 .mode-tile--rescue:hover {
-  border-color: rgba(94, 201, 184, 0.4);
+  border-color: var(--color-accent-rescue);
+}
+
+/* Light mode specific tile presence and vibrant accent edging */
+:root[data-theme="light"] .mode-tile--start {
+  border-left: 5px solid var(--color-accent-start);
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(184, 86, 0, 0.08);
+}
+
+:root[data-theme="light"] .mode-tile--charge {
+  border-left: 5px solid var(--color-accent-charge);
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(204, 27, 36, 0.08);
+}
+
+:root[data-theme="light"] .mode-tile--rescue {
+  border-left: 5px solid var(--color-accent-rescue);
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(59, 66, 204, 0.08);
+}
+
+:root[data-theme="light"] .mode-tile-glow {
+  opacity: 0.45;
+  filter: blur(28px);
+}
+
+:root[data-theme="light"] .mode-tile:hover .mode-tile-glow {
+  opacity: 0.7;
 }
 
 .mode-tile-content {
@@ -212,26 +240,29 @@
 .mode-badge {
   font-family: var(--font-interface);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 2px 8px;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
 }
 
 .mode-badge--start {
   color: var(--color-accent-start);
-  background-color: rgba(244, 185, 122, 0.12);
+  background-color: var(--color-accent-start-bg);
+  border: 1px solid var(--color-accent-start-border);
 }
 
 .mode-badge--charge {
   color: var(--color-accent-charge);
-  background-color: rgba(255, 107, 107, 0.12);
+  background-color: var(--color-accent-charge-bg);
+  border: 1px solid var(--color-accent-charge-border);
 }
 
 .mode-badge--rescue {
   color: var(--color-accent-rescue);
-  background-color: rgba(94, 201, 184, 0.12);
+  background-color: var(--color-accent-rescue-bg);
+  border: 1px solid var(--color-accent-rescue-border);
 }
 
 .mode-cue {
@@ -260,8 +291,8 @@
 .last-step-box {
   margin-top: var(--space-4);
   padding: var(--space-3) var(--space-4);
-  background-color: rgba(11, 11, 16, 0.75);
-  border: 1px solid rgba(94, 201, 184, 0.25);
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-accent-rescue-bg);
   border-radius: var(--radius-md);
   display: flex;
   justify-content: space-between;

@@ -160,6 +160,11 @@ export const STRINGS = {
     honestyNoteBody:
       'Your PIN stops people from opening the app on your phone, but it does not encrypt files stored on the device.',
     preferencesSection: 'Preferences',
+    appearanceTitle: 'Appearance',
+    appearanceDesc: 'Choose light, dark, or system preference.',
+    themeDark: 'Dark',
+    themeLight: 'Light',
+    themeSystem: 'System',
     ritualTitle: 'Breath-Paced Ritual',
     ritualDesc: 'Slow glowing orb opening before each session.',
     ritualScaleTitle: 'Ritual Length',
@@ -256,6 +261,7 @@ export const STRINGS = {
   accessibility: {
     openSettings: 'Open settings',
     openLibrary: 'Open library',
+    toggleTheme: 'Toggle light and dark theme',
     openDev: 'Open developer diagnostics',
     openStyleguide: 'Open design styleguide',
     closeSheet: 'Close dialog sheet',

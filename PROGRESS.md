@@ -78,6 +78,8 @@
   - **Time-of-Day LivingBackground Tints**: Added automatic subtle hue adjustments based on current local hour (morning warm amber shift 5am-12pm, natural afternoon daylight 12pm-6pm, twilight evening hue 6pm-5am). Filter effects are automatically disabled when `@media (prefers-reduced-motion: reduce)` is enabled.
   - **Route Lazy Loading (`Suspense` & `React.lazy`)**: Split all 9 screen components into independent dynamic import chunks with a quiet loader fallback, keeping the initial JS bundle minimal.
   - **Accessibility Audit**: Verified contrast, focus outlines, 44px minimum touch targets across all buttons and controls, and descriptive ARIA roles and labels.
+  - **Intentional Palette Redesign**: Replaced the original green-teal Rescue with Twilight Iris (`#7B8CE2`) and refined Start to Sunrise Honey (`#F0A35B`), while keeping Charge as Radiant Crimson Red (`#FF5459`). Completely eliminates stop-light associations while keeping Charge motivated and fired-up.
+  - **Light Mode System**: Engineered a warm parchment paper Light Theme (`#FAF8F5` base, `#1A1816` ink text) with soft watercolor LivingBackground blooms. Added an instant Sun/Moon toggle button to the Home top navigation bar and an "Appearance" preference selector (`Dark`, `Light`, `System`) in Settings. Integrated zero-FOUC theme hydration in `index.html`.
   - **Portfolio Documentation (`README.md`)**: Complete portfolio write-up covering product vision, user problem, architectural decisions, iOS constraint solutions, local zero-network proof, testing methodology, and instructions for visitors.
 
 ---
@@ -106,7 +108,6 @@
 ## Later List (Deferred Features)
 
 - User-created custom modes and user-selected mode accent colors.
-- Light color theme.
 - Localization / internationalization for additional languages.
 - Optional encrypted storage with key derived from user PIN.
 - Opt-in cloud sync.

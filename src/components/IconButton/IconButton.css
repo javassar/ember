@@ -63,8 +63,8 @@
 /* Active State */
 .ember-icon-btn--active {
   color: var(--color-accent-start);
-  background-color: rgba(244, 185, 122, 0.12);
-  border-color: rgba(244, 185, 122, 0.3);
+  background-color: var(--color-accent-start-bg);
+  border-color: var(--color-accent-start);
 }
 
 .ember-icon-btn:disabled {

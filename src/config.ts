@@ -43,6 +43,7 @@ export const TRANSITIONS = {
 } as const;
 
 // Theme colors and mode accents
+// Redesigned to eliminate stop-light resemblance: Sunrise Honey, Radiant Crimson, Twilight Iris
 export const COLORS = {
   bgBase: '#0B0B10',
   bgSurface: '#16161F',
@@ -50,9 +51,22 @@ export const COLORS = {
   textSecondary: 'rgba(243, 239, 232, 0.6)',
   borderQuiet: 'rgba(243, 239, 232, 0.1)',
   borderFocus: 'rgba(243, 239, 232, 0.35)',
-  start: '#F4B97A',   // Warm amber for Start mode
-  charge: '#FF6B6B',  // Hot coral for Charge mode
-  rescue: '#5EC9B8',  // Calm teal for Rescue mode
+  start: '#F0A35B',   // Sunrise Honey for Start mode (warm morning dawn)
+  charge: '#FF5459',  // Radiant Crimson for Charge mode (fired up and motivated)
+  rescue: '#7B8CE2',  // Twilight Iris for Rescue mode (calming de-escalating periwinkle)
+} as const;
+
+// Light mode color tokens (warm parchment paper aesthetic with strong contrast)
+export const LIGHT_COLORS = {
+  bgBase: '#FAF8F5',
+  bgSurface: '#FFFFFF',
+  textPrimary: '#1A1816',
+  textSecondary: 'rgba(26, 24, 22, 0.7)',
+  borderQuiet: 'rgba(26, 24, 22, 0.1)',
+  borderFocus: 'rgba(26, 24, 22, 0.42)',
+  start: '#B85600',   // Rich Spiced Honey
+  charge: '#CC1B24',  // Bold Crimson Flame
+  rescue: '#3B42CC',  // Vibrant Royal Iris
 } as const;
 
 // Default mode configurations
@@ -97,4 +111,5 @@ export const DEFAULT_SETTINGS: Settings = {
   onboardingDone: false,
   lastExportAt: null,
   modes: DEFAULT_MODE_CONFIGS,
+  theme: 'dark',
 };
