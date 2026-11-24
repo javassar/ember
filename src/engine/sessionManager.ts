@@ -26,6 +26,7 @@ export interface LoadedSession {
   modeConfig: ModeConfig;
   settings: Settings;
   sessionNumberToday: number; // 1 for first session today, 2 for second, etc.
+  remainingRotatingCount: number; // Unseen rotating items available for "Show me more"
 }
 
 // Loads and initializes a new session for the specified mode.
@@ -103,6 +104,12 @@ export async function initializeSession(mode: Mode): Promise<LoadedSession> {
     }
   }
 
+  const sessionIdsSet = new Set(buildResult.sessionItemIds);
+  const { rotating: eligibleRotating } = filterEligibleItems(allItems, mode);
+  const remainingRotatingCount = eligibleRotating.filter(
+    (item) => !sessionIdsSet.has(item.id)
+  ).length;
+
   const sessionId = `ses_${now}_${Math.random().toString(36).slice(2, 8)}`;
 
   return {
@@ -112,6 +119,7 @@ export async function initializeSession(mode: Mode): Promise<LoadedSession> {
     modeConfig,
     settings,
     sessionNumberToday: currentModeSessionNumber,
+    remainingRotatingCount,
   };
 }
 

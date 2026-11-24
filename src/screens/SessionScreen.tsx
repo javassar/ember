@@ -42,6 +42,7 @@ export const SessionScreen: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRitualActive, setIsRitualActive] = useState(true);
   const [extrasDrawnCount, setExtrasDrawnCount] = useState(0);
+  const [remainingPoolCount, setRemainingPoolCount] = useState(0);
   const [hasExhaustedPool, setHasExhaustedPool] = useState(false);
 
   // Chrome visibility (auto-hides after 2s of inactivity)
@@ -101,6 +102,7 @@ export const SessionScreen: React.FC = () => {
         if (!isCancelled) {
           setSessionData(loaded);
           setItems(loaded.items);
+          setRemainingPoolCount(loaded.remainingRotatingCount);
           setIsMuted(!loaded.settings.soundOnByDefault);
           const effective = computeEffectiveRitualScale(
             mode,
@@ -264,9 +266,14 @@ export const SessionScreen: React.FC = () => {
     }, 1800);
   };
 
+  const extrasRemaining = Math.min(
+    EXTRA_ITEMS_MAX - extrasDrawnCount,
+    remainingPoolCount
+  );
+
   // "Show me more" handler
   const handleShowMore = async () => {
-    if (extrasDrawnCount >= EXTRA_ITEMS_MAX || hasExhaustedPool) {
+    if (extrasRemaining <= 0 || hasExhaustedPool) {
       return;
     }
 
@@ -276,8 +283,10 @@ export const SessionScreen: React.FC = () => {
       if (extraItem) {
         setItems((prev) => [...prev, extraItem]);
         setExtrasDrawnCount((prev) => prev + 1);
+        setRemainingPoolCount((prev) => Math.max(0, prev - 1));
         setCurrentIndex(items.length); // Immediately show the new extra item
       } else {
+        setRemainingPoolCount(0);
         setHasExhaustedPool(true);
       }
     } catch (err) {
@@ -625,20 +634,18 @@ export const SessionScreen: React.FC = () => {
                 <Button variant="primary" fullWidth onClick={() => navigate('/')}>
                   {STRINGS.session.doneBtn}
                 </Button>
-                <Button
-                  variant="secondary"
-                  fullWidth
-                  disabled={
-                    extrasDrawnCount >= EXTRA_ITEMS_MAX || hasExhaustedPool
-                  }
-                  onClick={handleShowMore}
-                >
-                  {extrasDrawnCount >= EXTRA_ITEMS_MAX || hasExhaustedPool
-                    ? STRINGS.session.showMoreExhausted
-                    : STRINGS.session.showMoreRemaining(
-                        EXTRA_ITEMS_MAX - extrasDrawnCount
-                      )}
-                </Button>
+                {(extrasRemaining > 0 || extrasDrawnCount > 0) && (
+                  <Button
+                    variant="secondary"
+                    fullWidth
+                    disabled={extrasRemaining <= 0 || hasExhaustedPool}
+                    onClick={handleShowMore}
+                  >
+                    {extrasRemaining <= 0 || hasExhaustedPool
+                      ? STRINGS.session.showMoreExhausted
+                      : STRINGS.session.showMoreRemaining(extrasRemaining)}
+                  </Button>
+                )}
               </div>
             </div>
           )

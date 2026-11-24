@@ -59,6 +59,8 @@ describe('Session Manager (src/engine/sessionManager.ts)', () => {
     expect(session1.items.length).toBeGreaterThan(0);
     // Core item is first
     expect(session1.items[0].id).toBe('c1');
+    // Default rotatingCount for start is 2, so 1 of the 3 rotating items remains unseen
+    expect(session1.remainingRotatingCount).toBe(1);
 
     // State should now record 1 session today
     const state1 = await getEngineState();
@@ -78,6 +80,26 @@ describe('Session Manager (src/engine/sessionManager.ts)', () => {
     const state3 = await getEngineState();
     expect(state3.sessionCounts.countToday).toBe(3);
     expect(state3.sessionCounts.modeCountsToday?.charge).toBe(1);
+  });
+
+  it('reports accurate remainingRotatingCount when 0 or fewer than 3 extras exist', async () => {
+    await createItem(mockItem('c1', 'charge', 'core'));
+    await createItem(mockItem('r1', 'charge', 'rotating'));
+    await createItem(mockItem('r2', 'charge', 'rotating'));
+    await createItem(mockItem('r3', 'charge', 'rotating'));
+
+    // Default rotatingCount for charge is 3: all 3 rotating items are drawn -> 0 remaining
+    const exactSession = await initializeSession('charge');
+    expect(exactSession.items.length).toBe(4);
+    expect(exactSession.remainingRotatingCount).toBe(0);
+
+    await createItem(mockItem('r4', 'charge', 'rotating'));
+    await createItem(mockItem('r5', 'charge', 'rotating'));
+
+    // Now 5 rotating items exist, so 2 unseen rotating items remain after drawing 3
+    const partialSession = await initializeSession('charge');
+    expect(partialSession.items.length).toBe(4);
+    expect(partialSession.remainingRotatingCount).toBe(2);
   });
 
   it('draws an extra rotating item not currently in the session', async () => {
