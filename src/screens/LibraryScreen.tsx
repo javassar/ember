@@ -1,6 +1,6 @@
 // Library screen browsing content items and Rescue next steps with filters, thumbnail grid, and "Not landing" badges.
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ScreenLayout,
@@ -51,6 +51,8 @@ export const LibraryScreen: React.FC = () => {
 
   // Data
   const [itemsWithPosters, setItemsWithPosters] = useState<ItemWithPoster[]>([]);
+  const posterUrlsRef = useRef<string[]>([]);
+  const isMountedRef = useRef(true);
   const [nextSteps, setNextSteps] = useState<NextStep[]>([]);
   const [notLandingMap, setNotLandingMap] = useState<Map<string, Mode[]>>(new Map());
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -101,6 +103,17 @@ export const LibraryScreen: React.FC = () => {
         })
       );
 
+      const newUrls = loaded
+        .map((ip) => ip.posterUrl)
+        .filter((u): u is string => Boolean(u));
+
+      if (!isMountedRef.current) {
+        newUrls.forEach((u) => URL.revokeObjectURL(u));
+        return;
+      }
+
+      posterUrlsRef.current.forEach((u) => URL.revokeObjectURL(u));
+      posterUrlsRef.current = newUrls;
       setItemsWithPosters(loaded);
 
       // 3. Load Rescue next steps
@@ -115,13 +128,16 @@ export const LibraryScreen: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    return () => {
-      // Revoke created poster object URLs on unmount or reload
-      itemsWithPosters.forEach((ip) => {
-        if (ip.posterUrl) URL.revokeObjectURL(ip.posterUrl);
-      });
-    };
   }, [loadData]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      posterUrlsRef.current.forEach((u) => URL.revokeObjectURL(u));
+      posterUrlsRef.current = [];
+    };
+  }, []);
 
   const handleStepToggleDone = async (step: NextStep) => {
     const updated: NextStep = {

@@ -23,6 +23,7 @@ import {
   type LoadedSession,
 } from '../engine';
 import { getBlob, createNextStep } from '../data';
+import { ensureBlobMimeType } from '../lib/media';
 import { EXTRA_ITEMS_MAX } from '../config';
 import { STRINGS } from '../strings';
 import type { Mode, Item, ShowEvent } from '../types';
@@ -49,8 +50,13 @@ export const SessionScreen: React.FC = () => {
 
   // Media URLs and preloaded assets
   const [mediaUrls, setMediaUrls] = useState<Map<string, string>>(new Map());
+  const mediaUrlsRef = useRef<Map<string, string>>(new Map());
+  const inFlightMediaIdsRef = useRef<Set<string>>(new Set());
+  const isMountedRef = useRef(true);
   const [videoError, setVideoError] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const isMutedRef = useRef(isMuted);
+  isMutedRef.current = isMuted;
   const [showSoundHint, setShowSoundHint] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -119,7 +125,7 @@ export const SessionScreen: React.FC = () => {
     };
   }, [mode]);
 
-  // 3. Preload media for current and next item
+  // 3. Preload media for current and next item without revoking earlier active URLs
   useEffect(() => {
     if (items.length === 0 || currentIndex >= items.length) {
       return;
@@ -131,30 +137,57 @@ export const SessionScreen: React.FC = () => {
     }
 
     itemsToPreload.forEach(async (item) => {
-      if (item.type !== 'text' && item.mediaId && !mediaUrls.has(item.mediaId)) {
-        try {
-          const record = await getBlob(item.mediaId);
-          if (record?.blob) {
-            const url = URL.createObjectURL(record.blob);
-            setMediaUrls((prev) => new Map(prev).set(item.mediaId!, url));
-          }
-        } catch (err) {
-          console.error('Failed to load media blob:', err);
+      const mediaId = item.mediaId;
+      if (
+        item.type === 'text' ||
+        !mediaId ||
+        mediaUrlsRef.current.has(mediaId) ||
+        inFlightMediaIdsRef.current.has(mediaId)
+      ) {
+        return;
+      }
+
+      inFlightMediaIdsRef.current.add(mediaId);
+      try {
+        const record = await getBlob(mediaId);
+        if (!record?.blob) {
+          return;
         }
+
+        const playableBlob = ensureBlobMimeType(record.blob, record.mime);
+        const url = URL.createObjectURL(playableBlob);
+
+        if (!isMountedRef.current) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+
+        mediaUrlsRef.current.set(mediaId, url);
+        setMediaUrls(new Map(mediaUrlsRef.current));
+      } catch (err) {
+        console.error('Failed to load media blob:', err);
+      } finally {
+        inFlightMediaIdsRef.current.delete(mediaId);
       }
     });
-  }, [items, currentIndex, mediaUrls]);
+  }, [items, currentIndex]);
 
-  // Clean up object URLs and timers on unmount
+  // Clean up object URLs and timers only when leaving the session
   useEffect(() => {
-    const urlsToRevoke = mediaUrls;
+    isMountedRef.current = true;
+    const mediaUrlsMap = mediaUrlsRef.current;
+    const inFlightIds = inFlightMediaIdsRef.current;
+
     return () => {
-      urlsToRevoke.forEach((url) => URL.revokeObjectURL(url));
+      isMountedRef.current = false;
+      mediaUrlsMap.forEach((url) => URL.revokeObjectURL(url));
+      mediaUrlsMap.clear();
+      inFlightIds.clear();
       if (helpedTimeoutRef.current) {
         clearTimeout(helpedTimeoutRef.current);
       }
     };
-  }, [mediaUrls]);
+  }, []);
 
   // 4. Log ShowEvent and start dwell timer on item change
   const finalizeCurrentItemEvent = useCallback(async () => {
@@ -179,6 +212,7 @@ export const SessionScreen: React.FC = () => {
       const item = items[currentIndex];
       setVideoError(false);
       setVideoProgress(0);
+      setShowSoundHint(false);
       setCurrentHelped(false);
       itemShownAtRef.current = Date.now();
 
@@ -328,14 +362,53 @@ export const SessionScreen: React.FC = () => {
 
   const handleVideoClick = () => {
     touchActivity();
+    setShowSoundHint(false);
     if (videoRef.current) {
       if (videoRef.current.paused) {
-        videoRef.current.play();
+        videoRef.current.play().catch(() => {});
       } else {
         videoRef.current.pause();
       }
     }
   };
+
+  const isEndScreen = currentIndex >= items.length;
+  const currentItem = items[currentIndex];
+  const currentMediaUrl = currentItem?.mediaId
+    ? mediaUrls.get(currentItem.mediaId)
+    : undefined;
+
+  // Start video playback once ritual clears and fall back to muted if unmuted autoplay is blocked on iOS
+  useEffect(() => {
+    const video = videoRef.current;
+    if (
+      !sessionData ||
+      isRitualActive ||
+      isEndScreen ||
+      currentItem?.type !== 'video' ||
+      !currentMediaUrl ||
+      videoError ||
+      !video
+    ) {
+      return;
+    }
+
+    video.muted = isMutedRef.current;
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          return;
+        }
+        if (!video.muted) {
+          video.muted = true;
+          setIsMuted(true);
+          setShowSoundHint(true);
+          video.play().catch(() => {});
+        }
+      });
+    }
+  }, [sessionData, isRitualActive, isEndScreen, currentIndex, currentItem?.type, currentMediaUrl, videoError]);
 
   // 1. While initial session data is loading from storage
   if (!sessionData) {
@@ -376,9 +449,6 @@ export const SessionScreen: React.FC = () => {
     );
   }
 
-  const isEndScreen = currentIndex >= items.length;
-  const currentItem = items[currentIndex];
-
   // Helper to determine text size class by length
   const getTextSizeClass = (length: number) => {
     if (length <= 60) return 'session-text--large';
@@ -386,10 +456,6 @@ export const SessionScreen: React.FC = () => {
     if (length <= 400) return 'session-text--regular';
     return 'session-text--small';
   };
-
-  const currentMediaUrl = currentItem?.mediaId
-    ? mediaUrls.get(currentItem.mediaId)
-    : undefined;
 
   return (
     <div
@@ -622,7 +688,7 @@ export const SessionScreen: React.FC = () => {
                   src={currentMediaUrl}
                   className="session-video-element"
                   playsInline
-                  autoPlay
+                  autoPlay={!isRitualActive}
                   muted={isMuted}
                   loop={false}
                   onClick={handleVideoClick}

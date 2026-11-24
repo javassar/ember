@@ -61,6 +61,9 @@ export const ItemEditScreen: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<SelectedFilePreview[]>([]);
   const [existingItem, setExistingItem] = useState<Item | null>(null);
   const [existingPosterUrl, setExistingPosterUrl] = useState<string | null>(null);
+  const existingPosterUrlRef = useRef<string | null>(null);
+  const selectedFilesRef = useRef<SelectedFilePreview[]>([]);
+  selectedFilesRef.current = selectedFiles;
   const [existingBlobSize, setExistingBlobSize] = useState<number | null>(null);
   const [itemEvents, setItemEvents] = useState<ShowEvent[]>([]);
 
@@ -86,7 +89,11 @@ export const ItemEditScreen: React.FC = () => {
       // Load poster if present
       const poster = await getPoster(item.id);
       if (poster) {
+        if (existingPosterUrlRef.current) {
+          URL.revokeObjectURL(existingPosterUrlRef.current);
+        }
         const pUrl = URL.createObjectURL(poster.blob);
+        existingPosterUrlRef.current = pUrl;
         setExistingPosterUrl(pUrl);
       }
 
@@ -108,19 +115,18 @@ export const ItemEditScreen: React.FC = () => {
 
   useEffect(() => {
     loadItem();
-    return () => {
-      if (existingPosterUrl) {
-        URL.revokeObjectURL(existingPosterUrl);
-      }
-    };
   }, [loadItem]);
 
-  // Clean up object URLs when selected files change
+  // Clean up object URLs only on unmount (removals revoke individually)
   useEffect(() => {
     return () => {
-      selectedFiles.forEach((f) => URL.revokeObjectURL(f.previewUrl));
+      if (existingPosterUrlRef.current) {
+        URL.revokeObjectURL(existingPosterUrlRef.current);
+        existingPosterUrlRef.current = null;
+      }
+      selectedFilesRef.current.forEach((f) => URL.revokeObjectURL(f.previewUrl));
     };
-  }, [selectedFiles]);
+  }, []);
 
   const cycleMode = (mode: Mode) => {
     setModes((prev) => {
@@ -198,6 +204,9 @@ export const ItemEditScreen: React.FC = () => {
       }
 
       // Subcase B: Media item(s)
+      let savedCount = 0;
+      let lastErrorMsg: string | null = null;
+
       for (let i = 0; i < selectedFiles.length; i++) {
         const itemFile = selectedFiles[i].file;
         setProcessingStatus(
@@ -207,7 +216,7 @@ export const ItemEditScreen: React.FC = () => {
         // Validation for videos
         if (itemFile.type.startsWith('video/')) {
           if (itemFile.size > VIDEO_MAX_BYTES) {
-            setToastMessage(STRINGS.itemEdit.fileTooLarge(500));
+            lastErrorMsg = STRINGS.itemEdit.fileTooLarge(500);
             continue;
           }
           if (itemFile.size > VIDEO_WARN_BYTES) {
@@ -253,9 +262,20 @@ export const ItemEditScreen: React.FC = () => {
           };
 
           await createItem(newItem, blobRecord, posterRecord);
+          savedCount++;
         } catch (err) {
           console.error(`Failed to process file ${itemFile.name}:`, err);
+          if (itemFile.type.startsWith('video/')) {
+            lastErrorMsg = STRINGS.itemEdit.videoUnsupported;
+          } else {
+            lastErrorMsg = 'Error processing file. Please try again.';
+          }
         }
+      }
+
+      if (savedCount === 0 && lastErrorMsg) {
+        setToastMessage(lastErrorMsg);
+        return;
       }
 
       navigate('/library');

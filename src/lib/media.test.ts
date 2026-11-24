@@ -6,6 +6,7 @@ import {
   shouldReencodeImage,
   determineItemCreation,
   createFallbackPoster,
+  ensureBlobMimeType,
 } from './media';
 import { IMAGE_MAX_EDGE, IMAGE_REENCODE_BYTES } from '../config';
 
@@ -75,5 +76,15 @@ describe('Media Processing Logic', () => {
     expect(blob).toBeDefined();
     expect(blob.type).toBe('image/svg+xml');
     expect(blob.size).toBeGreaterThan(0);
+  });
+
+  it('preserves existing Blob MIME type and restores missing MIME type', () => {
+    const typedBlob = new Blob(['video-bytes'], { type: 'video/quicktime' });
+    expect(ensureBlobMimeType(typedBlob, 'video/mp4').type).toBe('video/quicktime');
+
+    const untypedBlob = new Blob(['video-bytes']);
+    const restored = ensureBlobMimeType(untypedBlob, 'video/mp4');
+    expect(restored.type).toBe('video/mp4');
+    expect(restored.size).toBe(untypedBlob.size);
   });
 });

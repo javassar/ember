@@ -19,6 +19,14 @@ export interface ProcessedMedia {
   warnLarge?: boolean;
 }
 
+// Ensures a media Blob carries its stored MIME type before creating an object URL (e.g. after IndexedDB or backup round-trips).
+export function ensureBlobMimeType(blob: Blob, mime?: string): Blob {
+  if (blob.type || !mime) {
+    return blob;
+  }
+  return blob.slice(0, blob.size, mime);
+}
+
 // Pure function: Calculates scaled dimensions keeping aspect ratio within maxEdge.
 export function calculateTargetDimensions(
   width: number,
