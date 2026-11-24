@@ -30,6 +30,7 @@ import {
   processImage,
   processVideo,
   determineItemCreation,
+  ensureBlobMimeType,
   type ProcessedMedia,
 } from '../lib/media';
 import { VIDEO_MAX_BYTES, VIDEO_WARN_BYTES } from '../config';
@@ -62,6 +63,9 @@ export const ItemEditScreen: React.FC = () => {
   const [existingItem, setExistingItem] = useState<Item | null>(null);
   const [existingPosterUrl, setExistingPosterUrl] = useState<string | null>(null);
   const existingPosterUrlRef = useRef<string | null>(null);
+  const [existingVideoUrl, setExistingVideoUrl] = useState<string | null>(null);
+  const existingVideoUrlRef = useRef<string | null>(null);
+  const isMountedRef = useRef<boolean>(true);
   const selectedFilesRef = useRef<SelectedFilePreview[]>([]);
   selectedFilesRef.current = selectedFiles;
   const [existingBlobSize, setExistingBlobSize] = useState<number | null>(null);
@@ -89,19 +93,36 @@ export const ItemEditScreen: React.FC = () => {
       // Load poster if present
       const poster = await getPoster(item.id);
       if (poster) {
+        const pUrl = URL.createObjectURL(poster.blob);
+        if (!isMountedRef.current) {
+          URL.revokeObjectURL(pUrl);
+          return;
+        }
         if (existingPosterUrlRef.current) {
           URL.revokeObjectURL(existingPosterUrlRef.current);
         }
-        const pUrl = URL.createObjectURL(poster.blob);
         existingPosterUrlRef.current = pUrl;
         setExistingPosterUrl(pUrl);
       }
 
-      // Load blob metadata if present
+      // Load blob metadata (and playable video URL when editing a video)
       if (item.mediaId) {
         const blobRecord = await getBlob(item.mediaId);
         if (blobRecord) {
           setExistingBlobSize(blobRecord.size);
+          if (item.type === 'video' && blobRecord.blob) {
+            const playableBlob = ensureBlobMimeType(blobRecord.blob, blobRecord.mime);
+            const vUrl = URL.createObjectURL(playableBlob);
+            if (!isMountedRef.current) {
+              URL.revokeObjectURL(vUrl);
+              return;
+            }
+            if (existingVideoUrlRef.current) {
+              URL.revokeObjectURL(existingVideoUrlRef.current);
+            }
+            existingVideoUrlRef.current = vUrl;
+            setExistingVideoUrl(vUrl);
+          }
         }
       }
 
@@ -119,10 +140,16 @@ export const ItemEditScreen: React.FC = () => {
 
   // Clean up object URLs only on unmount (removals revoke individually)
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
+      isMountedRef.current = false;
       if (existingPosterUrlRef.current) {
         URL.revokeObjectURL(existingPosterUrlRef.current);
         existingPosterUrlRef.current = null;
+      }
+      if (existingVideoUrlRef.current) {
+        URL.revokeObjectURL(existingVideoUrlRef.current);
+        existingVideoUrlRef.current = null;
       }
       selectedFilesRef.current.forEach((f) => URL.revokeObjectURL(f.previewUrl));
     };
@@ -355,48 +382,87 @@ export const ItemEditScreen: React.FC = () => {
             <span className="field-label">Media (Photo or Video)</span>
 
             {/* Existing media preview if editing */}
-            {!isNew && existingItem && existingPosterUrl && (
-              <div className="existing-media-preview">
-                <img
-                  src={existingPosterUrl}
-                  alt={existingItem.text || 'Item thumbnail'}
-                  className="existing-poster-img"
-                />
-                <div className="existing-media-meta">
-                  <span className="existing-media-type">
-                    {existingItem.type.toUpperCase()}
-                  </span>
-                  {existingBlobSize !== null && (
-                    <span className="existing-media-size">
-                      {formatBytes(existingBlobSize)}
+            {!isNew && existingItem && (existingPosterUrl || existingVideoUrl) && (
+              existingItem.type === 'video' && existingVideoUrl ? (
+                <div className="existing-media-preview existing-media-preview--video">
+                  <video
+                    src={existingVideoUrl}
+                    poster={existingPosterUrl || undefined}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="existing-video-player"
+                  />
+                  <div className="existing-media-meta-row">
+                    <span className="existing-media-type">
+                      {existingItem.type.toUpperCase()}
                     </span>
-                  )}
+                    {existingBlobSize !== null && (
+                      <span className="existing-media-size">
+                        {formatBytes(existingBlobSize)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="existing-media-preview">
+                  {existingPosterUrl && (
+                    <img
+                      src={existingPosterUrl}
+                      alt={existingItem.text || 'Item thumbnail'}
+                      className="existing-poster-img"
+                    />
+                  )}
+                  <div className="existing-media-meta">
+                    <span className="existing-media-type">
+                      {existingItem.type.toUpperCase()}
+                    </span>
+                    {existingBlobSize !== null && (
+                      <span className="existing-media-size">
+                        {formatBytes(existingBlobSize)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )
             )}
 
             {/* Selected files preview list */}
             {selectedFiles.length > 0 && (
               <div className="selected-files-list">
                 {selectedFiles.map((sf, index) => (
-                  <div key={index} className="selected-file-card">
-                    {sf.type === 'image' ? (
-                      <img src={sf.previewUrl} alt="Preview" className="preview-thumb" />
-                    ) : (
-                      <div className="video-thumb-placeholder">🎬</div>
-                    )}
-                    <div className="selected-file-info">
-                      <span className="selected-file-name">{sf.file.name}</span>
-                      <span className="selected-file-size">{sf.sizeFormatted}</span>
+                  <div
+                    key={index}
+                    className={`selected-file-card ${sf.type === 'video' ? 'selected-file-card--video' : ''}`}
+                  >
+                    <div className="selected-file-row">
+                      {sf.type === 'image' ? (
+                        <img src={sf.previewUrl} alt="Preview" className="preview-thumb" />
+                      ) : (
+                        <div className="video-thumb-placeholder">🎬</div>
+                      )}
+                      <div className="selected-file-info">
+                        <span className="selected-file-name">{sf.file.name}</span>
+                        <span className="selected-file-size">{sf.sizeFormatted}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="remove-file-btn"
+                        onClick={() => removeSelectedFile(index)}
+                        aria-label={STRINGS.itemEdit.removeMediaBtn}
+                      >
+                        <IconClose size={18} />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      className="remove-file-btn"
-                      onClick={() => removeSelectedFile(index)}
-                      aria-label={STRINGS.itemEdit.removeMediaBtn}
-                    >
-                      <IconClose size={18} />
-                    </button>
+                    {sf.type === 'video' && (
+                      <video
+                        src={sf.previewUrl}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="selected-video-player"
+                      />
+                    )}
                   </div>
                 ))}
               </div>

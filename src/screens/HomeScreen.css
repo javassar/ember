@@ -177,7 +177,7 @@
   border-color: var(--color-accent-rescue);
 }
 
-/* Light mode specific tile presence and vibrant accent edging */
+/* Light mode specific tile presence */
 :root[data-theme="light"] .mode-tile {
   background-color: #ffffff;
   border: 1px solid rgba(26, 24, 22, 0.08);
@@ -185,17 +185,14 @@
 }
 
 :root[data-theme="light"] .mode-tile--start {
-  border-left: 5px solid var(--color-accent-start);
   box-shadow: 0 4px 16px rgba(184, 86, 0, 0.08);
 }
 
 :root[data-theme="light"] .mode-tile--charge {
-  border-left: 5px solid var(--color-accent-charge);
   box-shadow: 0 4px 16px rgba(204, 27, 36, 0.08);
 }
 
 :root[data-theme="light"] .mode-tile--rescue {
-  border-left: 5px solid var(--color-accent-rescue);
   box-shadow: 0 4px 16px rgba(59, 66, 204, 0.08);
 }
 

@@ -7,6 +7,7 @@ import {
   determineItemCreation,
   createFallbackPoster,
   ensureBlobMimeType,
+  calculateVideoPosterSeekTime,
 } from './media';
 import { IMAGE_MAX_EDGE, IMAGE_REENCODE_BYTES } from '../config';
 
@@ -86,5 +87,13 @@ describe('Media Processing Logic', () => {
     const restored = ensureBlobMimeType(untypedBlob, 'video/mp4');
     expect(restored.type).toBe('video/mp4');
     expect(restored.size).toBe(untypedBlob.size);
+  });
+
+  it('seeks a few seconds into longer videos and halfway into short clips for thumbnails', () => {
+    expect(calculateVideoPosterSeekTime(15)).toBe(3);
+    expect(calculateVideoPosterSeekTime(6)).toBe(3);
+    expect(calculateVideoPosterSeekTime(4)).toBe(2);
+    expect(calculateVideoPosterSeekTime(0)).toBe(0);
+    expect(calculateVideoPosterSeekTime(Number.NaN)).toBe(0);
   });
 });

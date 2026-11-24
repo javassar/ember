@@ -184,6 +184,14 @@ export async function processImage(file: File): Promise<ProcessedMedia> {
   };
 }
 
+// Pure function: Chooses a timestamp a few seconds into a video for poster extraction so black intros are skipped.
+export function calculateVideoPosterSeekTime(durationSec: number): number {
+  if (!Number.isFinite(durationSec) || durationSec <= 0) {
+    return 0;
+  }
+  return Math.min(3, durationSec / 2);
+}
+
 // Processes a video file: reads duration, extracts dimensions, generates a JPEG poster frame, and checks size limits.
 export async function processVideo(file: File): Promise<ProcessedMedia> {
   if (file.size > VIDEO_MAX_BYTES) {
@@ -209,7 +217,7 @@ export async function processVideo(file: File): Promise<ProcessedMedia> {
 
   const objectUrl = URL.createObjectURL(file);
   const video = document.createElement('video');
-  video.preload = 'metadata';
+  video.preload = 'auto';
   video.src = objectUrl;
   video.muted = true;
   video.playsInline = true;
@@ -231,15 +239,15 @@ export async function processVideo(file: File): Promise<ProcessedMedia> {
     const height = video.videoHeight || 720;
     const durationSec = video.duration || 0;
 
-    // Seek to 0.5s or halfway into the clip for poster thumbnail extraction
-    const seekTime = Math.min(0.5, durationSec > 0 ? durationSec / 2 : 0);
+    // Seek a few seconds in (or halfway for very short clips) so black intros aren't captured
+    const seekTime = calculateVideoPosterSeekTime(durationSec);
     video.currentTime = seekTime;
 
     let posterBlob: Blob = createFallbackPoster(width, height);
 
     try {
       await new Promise<void>((resolve) => {
-        const timeout = setTimeout(resolve, 2000);
+        const timeout = setTimeout(resolve, 3500);
         video.onseeked = () => {
           clearTimeout(timeout);
           resolve();
