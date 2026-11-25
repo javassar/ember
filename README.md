@@ -25,15 +25,6 @@ Ember is designed to be shaped by you from your very first open. It is a complet
 
 ---
 
-## Walkthrough
-
-<p align="center">
-  <img src="./docs/screenshots/preview.gif" alt="Ember Experience Walkthrough" width="280" />
-  <br />
-  <sub><em>Interactive walkthrough: Theme toggle, Start space breath ritual & feedback, and Library browsing with instant filters</em></sub>
-</p>
-
----
 
 ## Screenshots
 
