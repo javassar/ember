@@ -82,6 +82,13 @@
   line-height: 1.4;
 }
 
+.export-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
 .export-banner-link {
   font-size: var(--text-xs);
   font-weight: 600;
@@ -97,6 +104,25 @@
 .export-banner-link:hover {
   background: var(--color-accent-start);
   color: var(--color-bg-base);
+}
+
+.export-banner-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.export-banner-close:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-accent-start-bg);
 }
 
 .modes-container {

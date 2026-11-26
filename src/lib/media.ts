@@ -184,12 +184,97 @@ export async function processImage(file: File): Promise<ProcessedMedia> {
   };
 }
 
-// Pure function: Chooses a timestamp a few seconds into a video for poster extraction so black intros are skipped.
+// Pure function: Chooses a timestamp well into a video for poster extraction so black intros are skipped.
 export function calculateVideoPosterSeekTime(durationSec: number): number {
   if (!Number.isFinite(durationSec) || durationSec <= 0) {
     return 0;
   }
-  return Math.min(3, durationSec / 2);
+  return Math.min(durationSec * 0.5, Math.min(10, Math.max(4, durationSec * 0.35)));
+}
+
+// Pure function: Returns ordered candidate timestamps to try when extracting a non-black video poster frame.
+export function getVideoPosterCandidateTimes(durationSec: number): number[] {
+  if (!Number.isFinite(durationSec) || durationSec <= 0) {
+    return [0];
+  }
+
+  const maxSeek = Math.max(0, durationSec - 0.1);
+  const raw = [
+    calculateVideoPosterSeekTime(durationSec),
+    durationSec * 0.5,
+    durationSec * 0.75,
+    Math.min(2, durationSec * 0.2),
+  ];
+
+  const unique: number[] = [];
+  for (const t of raw) {
+    const clamped = Math.min(maxSeek, Math.max(0, Number(t.toFixed(2))));
+    if (!unique.some((existing) => Math.abs(existing - clamped) < 0.25)) {
+      unique.push(clamped);
+    }
+  }
+  return unique;
+}
+
+// Pure function: Detects whether an RGBA pixel buffer is almost completely black (e.g. black intro or undecoded frame).
+export function isFrameMostlyBlack(rgbaData: Uint8ClampedArray): boolean {
+  const pixelCount = Math.floor(rgbaData.length / 4);
+  if (pixelCount === 0) {
+    return true;
+  }
+
+  const step = Math.max(1, Math.floor(pixelCount / 256));
+  let sampled = 0;
+  let black = 0;
+
+  for (let p = 0; p < pixelCount; p += step) {
+    const offset = p * 4;
+    const r = rgbaData[offset];
+    const g = rgbaData[offset + 1];
+    const b = rgbaData[offset + 2];
+    const a = rgbaData[offset + 3];
+    sampled++;
+    if (a === 0 || (r < 20 && g < 20 && b < 20)) {
+      black++;
+    }
+  }
+
+  return sampled === 0 || black / sampled >= 0.95;
+}
+
+async function seekVideoForFrame(video: HTMLVideoElement, targetTime: number): Promise<void> {
+  if (Math.abs(video.currentTime - targetTime) > 0.05) {
+    await new Promise<void>((resolve) => {
+      const timeout = setTimeout(resolve, 3500);
+      video.addEventListener(
+        'seeked',
+        () => {
+          clearTimeout(timeout);
+          resolve();
+        },
+        { once: true }
+      );
+      video.currentTime = targetTime;
+    });
+  }
+
+  // Ensure hardware decoder has a decoded frame ready (critical on iOS Safari)
+  if (video.readyState < 2) {
+    try {
+      await video.play();
+      video.pause();
+    } catch {
+      // Ignore autoplay errors; drawImage still attempts capture
+    }
+  }
+
+  await new Promise<void>((resolve) => {
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => resolve());
+    } else {
+      setTimeout(resolve, 50);
+    }
+  });
 }
 
 // Processes a video file: reads duration, extracts dimensions, generates a JPEG poster frame, and checks size limits.
@@ -221,10 +306,19 @@ export async function processVideo(file: File): Promise<ProcessedMedia> {
   video.src = objectUrl;
   video.muted = true;
   video.playsInline = true;
+  // Temporarily attach offscreen so iOS WebKit decodes frames instead of painting black
+  video.style.position = 'fixed';
+  video.style.left = '-9999px';
+  video.style.top = '-9999px';
+  video.style.width = '2px';
+  video.style.height = '2px';
+  video.style.opacity = '0.01';
+  video.style.pointerEvents = 'none';
+  document.body?.appendChild(video);
 
   try {
     await new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => resolve(), 3000);
+      const timeout = setTimeout(() => resolve(), 4000);
       video.onloadedmetadata = () => {
         clearTimeout(timeout);
         resolve();
@@ -239,33 +333,47 @@ export async function processVideo(file: File): Promise<ProcessedMedia> {
     const height = video.videoHeight || 720;
     const durationSec = video.duration || 0;
 
-    // Seek a few seconds in (or halfway for very short clips) so black intros aren't captured
-    const seekTime = calculateVideoPosterSeekTime(durationSec);
-    video.currentTime = seekTime;
+    // Prime the muted inline decoder on iOS WebKit before seeking
+    try {
+      await video.play();
+      video.pause();
+    } catch {
+      // Ignore if browser blocks play before user gesture
+    }
 
     let posterBlob: Blob = createFallbackPoster(width, height);
 
     try {
-      await new Promise<void>((resolve) => {
-        const timeout = setTimeout(resolve, 3500);
-        video.onseeked = () => {
-          clearTimeout(timeout);
-          resolve();
-        };
-      });
-
       const pTarget = calculateTargetDimensions(width, height, 720);
       const canvas = document.createElement('canvas');
       canvas.width = pTarget.width;
       canvas.height = pTarget.height;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
       if (ctx) {
-        ctx.drawImage(video, 0, 0, pTarget.width, pTarget.height);
-        const generated = await new Promise<Blob | null>((resolve) => {
-          canvas.toBlob(resolve, 'image/jpeg', 0.85);
-        });
-        if (generated) {
-          posterBlob = generated;
+        const candidateTimes = getVideoPosterCandidateTimes(durationSec);
+        for (const candidateTime of candidateTimes) {
+          await seekVideoForFrame(video, candidateTime);
+          ctx.drawImage(video, 0, 0, pTarget.width, pTarget.height);
+
+          let mostlyBlack = false;
+          try {
+            const imageData = ctx.getImageData(0, 0, pTarget.width, pTarget.height);
+            mostlyBlack = isFrameMostlyBlack(imageData.data);
+          } catch {
+            mostlyBlack = false;
+          }
+
+          const generated = await new Promise<Blob | null>((resolve) => {
+            canvas.toBlob(resolve, 'image/jpeg', 0.85);
+          });
+
+          if (generated) {
+            posterBlob = generated;
+            if (!mostlyBlack) {
+              break;
+            }
+          }
         }
       }
     } catch {
@@ -283,6 +391,10 @@ export async function processVideo(file: File): Promise<ProcessedMedia> {
       warnLarge,
     };
   } finally {
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    video.remove();
     URL.revokeObjectURL(objectUrl);
   }
 }

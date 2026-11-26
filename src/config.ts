@@ -110,6 +110,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundOnByDefault: false,
   onboardingDone: false,
   lastExportAt: null,
+  exportReminderDismissed: false,
   modes: DEFAULT_MODE_CONFIGS,
   theme: 'dark',
 };

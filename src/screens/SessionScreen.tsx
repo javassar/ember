@@ -689,7 +689,7 @@ export const SessionScreen: React.FC = () => {
                 <p>{STRINGS.session.videoUnsupported}</p>
               </div>
             ) : currentMediaUrl ? (
-              <>
+              <div className="session-video-frame">
                 <video
                   ref={videoRef}
                   src={currentMediaUrl}
@@ -716,7 +716,7 @@ export const SessionScreen: React.FC = () => {
                     {STRINGS.session.tapForSound}
                   </div>
                 )}
-              </>
+              </div>
             ) : (
               <div className="session-media-error">
                 <span>{STRINGS.common.loading}</span>

@@ -74,6 +74,7 @@ export interface Settings {
   soundOnByDefault: boolean;
   onboardingDone: boolean;
   lastExportAt: number | null;
+  exportReminderDismissed?: boolean;
   modes: Record<Mode, ModeConfig>;
   theme?: ThemePreference;
 }

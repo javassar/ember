@@ -28,6 +28,7 @@ export const STRINGS = {
     exportReminderTitle: 'Backup Reminder',
     exportReminderBody: "You haven't backed up your content in a while. Save a copy of your library to protect it.",
     exportReminderAction: 'Back up now',
+    exportReminderDismiss: 'Dismiss backup reminder',
   },
   modes: {
     start: 'Start',

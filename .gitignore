@@ -1,6 +1,8 @@
 # Dependencies
 node_modules/
 
+diagnostic_screenshots/
+
 # Production build
 dist/
 

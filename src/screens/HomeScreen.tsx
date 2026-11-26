@@ -12,9 +12,10 @@ import {
   IconSettings,
   IconSun,
   IconMoon,
+  IconClose,
 } from '../components';
 import { useLock } from '../context/LockContext';
-import { listNextSteps, updateNextStep, getSettings, countItems } from '../data';
+import { listNextSteps, updateNextStep, getSettings, saveSettings, countItems } from '../data';
 import type { Mode, NextStep, ModeConfig } from '../types';
 import './HomeScreen.css';
 
@@ -63,11 +64,13 @@ export const HomeScreen: React.FC = () => {
         setModesConfig(settings.modes);
       }
 
-      // Check export reminder (older than 30 days or never exported, if user has items)
+      // Check export reminder (older than 30 days or never exported, if user has items and hasn't dismissed it)
       const lastExport = settings?.lastExportAt;
       const exportOlderThanLimit =
         !lastExport || Date.now() - lastExport > EXPORT_REMINDER_DAYS * 24 * 60 * 60 * 1000;
-      setShowExportReminder(itemsCount > 0 && exportOlderThanLimit);
+      setShowExportReminder(
+        itemsCount > 0 && exportOlderThanLimit && !settings?.exportReminderDismissed
+      );
 
       // Check for an undone Rescue next-step from the last 24 hours
       const steps = await listNextSteps();
@@ -112,6 +115,15 @@ export const HomeScreen: React.FC = () => {
       }
     }
     setLastRescueStep(null);
+  };
+
+  const handleDismissExportReminder = async () => {
+    setShowExportReminder(false);
+    try {
+      await saveSettings({ exportReminderDismissed: true });
+    } catch (err) {
+      console.error('Failed to persist backup reminder dismissal:', err);
+    }
   };
 
   return (
@@ -159,9 +171,19 @@ export const HomeScreen: React.FC = () => {
               <span className="export-banner-title">{STRINGS.home.exportReminderTitle}</span>
               <span className="export-banner-body">{STRINGS.home.exportReminderBody}</span>
             </div>
-            <Link to="/settings" className="export-banner-link">
-              {STRINGS.home.exportReminderAction} →
-            </Link>
+            <div className="export-banner-actions">
+              <Link to="/settings" className="export-banner-link">
+                {STRINGS.home.exportReminderAction} →
+              </Link>
+              <button
+                type="button"
+                className="export-banner-close"
+                aria-label={STRINGS.home.exportReminderDismiss}
+                onClick={handleDismissExportReminder}
+              >
+                <IconClose size={16} />
+              </button>
+            </div>
           </div>
         )}
 

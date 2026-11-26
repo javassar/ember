@@ -263,16 +263,24 @@ describe('IndexedDB Data Layer', () => {
     const initial = await getSettings();
     expect(initial.ritualEnabled).toBe(true);
     expect(initial.lockTimeoutMs).toBe(300_000);
+    expect(initial.exportReminderDismissed).toBe(false);
 
-    const updated = await saveSettings({ lockTimeoutMs: 60_000, soundOnByDefault: true });
+    const updated = await saveSettings({
+      lockTimeoutMs: 60_000,
+      soundOnByDefault: true,
+      exportReminderDismissed: true,
+    });
     expect(updated.lockTimeoutMs).toBe(60_000);
     expect(updated.soundOnByDefault).toBe(true);
+    expect(updated.exportReminderDismissed).toBe(true);
 
     const reloaded = await getSettings();
     expect(reloaded.lockTimeoutMs).toBe(60_000);
+    expect(reloaded.exportReminderDismissed).toBe(true);
 
     const restored = await resetSettings();
     expect(restored.lockTimeoutMs).toBe(300_000);
+    expect(restored.exportReminderDismissed).toBe(false);
   });
 
   it('seeds 12 sample items, prevents duplicates, and deletes samples cleanly', async () => {

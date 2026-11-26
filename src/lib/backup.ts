@@ -60,6 +60,7 @@ export async function buildManifest(): Promise<BackupManifest> {
     soundOnByDefault: settings.soundOnByDefault,
     onboardingDone: settings.onboardingDone,
     lastExportAt: settings.lastExportAt,
+    exportReminderDismissed: settings.exportReminderDismissed ?? false,
     modes: settings.modes,
     theme: settings.theme ?? 'dark',
   };

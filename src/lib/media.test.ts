@@ -8,6 +8,8 @@ import {
   createFallbackPoster,
   ensureBlobMimeType,
   calculateVideoPosterSeekTime,
+  getVideoPosterCandidateTimes,
+  isFrameMostlyBlack,
 } from './media';
 import { IMAGE_MAX_EDGE, IMAGE_REENCODE_BYTES } from '../config';
 
@@ -89,11 +91,34 @@ describe('Media Processing Logic', () => {
     expect(restored.size).toBe(untypedBlob.size);
   });
 
-  it('seeks a few seconds into longer videos and halfway into short clips for thumbnails', () => {
-    expect(calculateVideoPosterSeekTime(15)).toBe(3);
-    expect(calculateVideoPosterSeekTime(6)).toBe(3);
+  it('seeks well into longer videos and halfway into short clips for thumbnails', () => {
+    expect(calculateVideoPosterSeekTime(30)).toBe(10);
+    expect(calculateVideoPosterSeekTime(20)).toBe(7);
+    expect(calculateVideoPosterSeekTime(10)).toBe(4);
     expect(calculateVideoPosterSeekTime(4)).toBe(2);
     expect(calculateVideoPosterSeekTime(0)).toBe(0);
     expect(calculateVideoPosterSeekTime(Number.NaN)).toBe(0);
+
+    const candidates = getVideoPosterCandidateTimes(20);
+    expect(candidates[0]).toBe(7);
+    expect(candidates).toContain(10);
+    expect(candidates).toContain(15);
+  });
+
+  it('detects mostly-black frames and accepts visible frames', () => {
+    const blackRgba = new Uint8ClampedArray(4 * 100);
+    for (let i = 0; i < 100; i++) {
+      blackRgba[i * 4 + 3] = 255;
+    }
+    expect(isFrameMostlyBlack(blackRgba)).toBe(true);
+
+    const brightRgba = new Uint8ClampedArray(4 * 100);
+    for (let i = 0; i < 100; i++) {
+      brightRgba[i * 4] = 180;
+      brightRgba[i * 4 + 1] = 140;
+      brightRgba[i * 4 + 2] = 90;
+      brightRgba[i * 4 + 3] = 255;
+    }
+    expect(isFrameMostlyBlack(brightRgba)).toBe(false);
   });
 });
